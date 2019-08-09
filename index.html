@@ -123,24 +123,23 @@ function checkCurrentContent(ta, e){
 </div>
 <figure>
 <textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
-Initialisiere Programm
-IF: Alles OK?
-  schreibe "Willkommen"
-  Spiele Fanfare
+initialize application
+IF: everything OK?
+  play some tone
 ELSE:
-  Gebe Fehlermeldung aus.
-  LOOP:
-    mach was
-  ENDLOOP: was denn?
+  output error message
 ENDIF:
-FOR: 1 bis 10
-  addiere zähler zur Summe
+FOR: from 1 to 10
+  add counter to sum
 ENDFOR:
-setze Wert = 0
-LOOP: bis Wert >10
-  erhöhe Wert um 1
-ENDLOOP:
-RETURN: irgendwas
+print current sum
+LOOP: 
+  IF: current sum is odd
+    add 1 to sum
+  ENDIF:
+  devide sum by 2
+ENDLOOP: sum &lt; 10
+RETURN: calculated result
 </textarea>
 <figuredesc>Sourcecode</figuredesc>
 </figure>
@@ -152,6 +151,9 @@ RETURN: irgendwas
 <div id="xmlview"></div>
 <figuredesc>Structured view</figuredesc>
 </figure>
+</div>
+<div style="position:absolute;top:0;right:0">
+<a href="https://github.com/nigjo/structogramview/"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
 </div>
 </body>
 </html>
