@@ -20,36 +20,41 @@ struct-sequence,struct-decision,struct-choose,struct-loop,struct-iteration,struc
   border-top:1px solid black;
   border-left:1px solid black;
 }
-
 struct-decision,struct-choose{
   display:table;
   width:100%;
   box-sizing: border-box;
   padding:0px;
   padding-top:2em;
+  position:relative;
 }
-struct-decision:before,struct-choose:before{
+struct-decision:after,struct-choose:after{
   display:table-caption;
   content: attr(condition);
-  text-align: center;
-  height:0;
+  text-align:center;
+  position:absolute;
+  width:100%;
+  top:0;
+  left:0;
+  text-shadow: 1px 0px white, 0px 1px white, -1px 0px white, 0px -1px white;
+  z-index:10;
 }
 struct-decision>struct-block{
   position: relative;
   vertical-align: top;
 }
-struct-decision>struct-block:before{
+struct-decision>struct-block:after{
   position: absolute;
   top:-1.25rem;
   font-style: italic;
   font-size: .75em;
   color:gray;
 }
-struct-decision>struct-block:last-child:before{
+struct-decision>struct-block:last-child:after{
   content:var(--decision-else);
   right:.25em;
 }
-struct-decision>struct-block:first-child:before{
+struct-decision>struct-block:first-child:after{
   content:var(--decision-then);
   left: .25em;
 }
@@ -99,6 +104,24 @@ struct-block>struct-sequence{
 }
 struct-decision>struct-block>*{
   border-left:none;
+}
+struct-decision>struct-block:first-child:before {
+  background-image:url(line_tl_br.png);
+}
+struct-decision>struct-block:last-child:before {
+  background-image:url(line_bl_tr.png);
+}
+struct-decision>struct-block:before {
+  content:'';
+  position:absolute;
+  top:-2em;
+  width:100%;
+  height:2em;
+  box-sizing: border-box;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index:0;
 }
 struct-block:not(:first-child){
   border-left:1px solid black;
