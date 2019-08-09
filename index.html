@@ -4,117 +4,8 @@
 <title>Struktogram Viewer</title>
 <link rel="stylesheet" href="structoview.css">
 <script src="structoview.js"></script>
-<style>
-figure{
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 1em 1em 1em;
-  padding:.25em;
-  padding-bottom: 0;
-  border:1px dotted gray;
-}
-figuredesc{
-  border-top:1px dotted gray;
-  width:100%;
-  display: block;
-  margin-top: .5em;
-  background-color: lightgray;
-  padding: .25em;
-  font-family: sans-serif;
-  position: relative;
-  left: -.25em;
-}
-#header{
-  display:block;
-  margin: .5em;
-}
-#xmlview{
-  white-space:pre-wrap;
-  font-family:Consolas;
-}
-struct-diagram{
-  /*--decision-then:'ja';*/
-  /*--decision-else:'nein';*/
-}
-figuredesc[data-parsererror]:before{
-  color:red;
-  content:attr(data-parsererror);
-  display:block;
-}
-</style>
-<script>
-function generateDiagram(viewer){
-  var codeid = viewer.dataset.structcodeId;
-  var sourcecode = document.querySelector('#'+codeid);
-  var diagram;
-  if(sourcecode.value)
-    diagram = StructDiagram.parseStructCode(sourcecode.value);
-  else
-    diagram = StructDiagram.parseStructCode(sourcecode.textContent);
-  while(viewer.children.length>0)
-    viewer.removeChild(viewer.firstChild);
-  viewer.appendChild(diagram);
-  return diagram;
-}
-function generateStructureView(diagram, xmlviewid){
-//data-structcode-xml
-  var xmllines = diagram.outerHTML
-      .replace(/>(?=<)/g, '>\n')
-      .split('\n');
-  var indended = '';
-  var indent = '';
-  for(var l in xmllines){
-    if(xmllines[l].indexOf('</')>=0){
-      if(xmllines[l].indexOf('<struct-')<0)
-        indent = indent.substr(2);
-      indended+=indent+xmllines[l]+'\n';
-    }else{
-      indended+=indent+xmllines[l]+'\n';
-      indent+='  ';
-    }
-  }
-  document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g,'<$1');
-}
-function generateViews(){
-  //document.body.style.
-  var allViews = document.querySelectorAll('.structview');
-  for(var i=0;i<allViews.length;i++){
-    try{
-      generateStructureView(generateDiagram(allViews[i]), allViews[i].dataset.structcodeXml);
-    }catch(e){
-      var codeid = allViews[i].dataset.structcodeId;
-      var sourcecode = document.querySelector('#'+codeid);
-      var erroritem = sourcecode.parentNode.lastElementChild;
-      console.warn('parser:', e);
-      if(e instanceof StructCodeParseException){
-        erroritem.dataset.parsererror = e.toString();
-      }
-    }
-  }
-}
-window.addEventListener('DOMContentLoaded', generateViews);
-
-function updateContent(ta, e){
-  var viewer = document.querySelector('.structview[data-structcode-id="'+ta.id+'"]');
-  var codeid = viewer.dataset.structcodeId;
-  var sourcecode = document.querySelector('#'+codeid);
-  var erroritem = sourcecode.parentNode.lastElementChild;
-  try{
-    erroritem.dataset.parsererror = '';
-    generateStructureView(generateDiagram(viewer), viewer.dataset.structcodeXml);
-  }catch(e){
-    console.warn('parser:', e);
-    if(e instanceof StructCodeParseException){
-      erroritem.dataset.parsererror = e.toString();
-    }
-  }
-}
-function checkCurrentContent(ta, e){
-  clearTimeout(window.nextUpdate);
-  window.nextUpdate = setTimeout(function(){updateContent(ta, e)}, 500);
-}
-
-</script>
+<link rel="stylesheet" href="structoedit.css">
+<script src="structoedit.js"></script>
 </head>
 <body>
 <div style="display:inline-block;margin:0">
@@ -124,7 +15,7 @@ function checkCurrentContent(ta, e){
 <figure>
 <textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
 initialize application
-IF: everything OK?
+<span class="structcodecmd">IF:</span> everything OK?
   play some tone
 ELSE:
   output error message

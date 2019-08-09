@@ -1,0 +1,46 @@
+.structcode{
+  min-width:40em;
+  min-height:30em;
+  resize:vertical;
+}
+.structcodecmd{
+  color:blue;
+  font-weight:bold;
+}
+figure{
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1em 1em 1em;
+  padding:.25em;
+  padding-bottom: 0;
+  border:1px dotted gray;
+}
+figuredesc{
+  border-top:1px dotted gray;
+  width:100%;
+  display: block;
+  margin-top: .5em;
+  background-color: lightgray;
+  padding: .25em;
+  font-family: sans-serif;
+  position: relative;
+  left: -.25em;
+}
+#header{
+  display:block;
+  margin: .5em;
+}
+#xmlview{
+  white-space:pre-wrap;
+  font-family:Consolas;
+}
+struct-diagram{
+  /*--decision-then:'ja';*/
+  /*--decision-else:'nein';*/
+}
+figuredesc[data-parsererror]:before{
+  color:red;
+  content:attr(data-parsererror);
+  display:block;
+}
+structcode
