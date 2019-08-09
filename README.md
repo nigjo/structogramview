@@ -1,5 +1,5 @@
 # structogramview
-A browser based structogram (Nassi-Shniderman diagram) viewer (and creator)
+A browser based structogram (Nassi–Shneiderman diagram) viewer (and creator)
 
 ![screenshot with source- structure- and diagram view](Zwischenablage01.png)
 
