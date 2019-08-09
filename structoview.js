@@ -144,7 +144,6 @@ class StructDiagram extends StructElement {
 
     return stack.shift();
   }
-
 }
 customElements.define('struct-diagram',StructDiagram);
 customElements.define('struct-sequence',StructSequence);
@@ -156,7 +155,7 @@ customElements.define('struct-iteration',StructIteration);
 customElements.define('struct-call',StructCall);
 customElements.define('struct-break',StructBreak);
 
-function StructCodeParseException(linenum, line, error){
+function StructCodeParseExceptionStructCodeParseException(linenum, line, error){
   this.linenum=linenum;
   this.line = line;
   this.contextError = error?error.toString():'unknown';

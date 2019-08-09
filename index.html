@@ -8,7 +8,7 @@
 figure{
   display: inline-block;
   vertical-align: top;
-  margin: 0 1em;
+  margin: 0 1em 1em 1em;
   padding:.25em;
   padding-bottom: 0;
   border:1px dotted gray;
@@ -36,35 +36,84 @@ struct-diagram{
   /*--decision-then:'ja';*/
   /*--decision-else:'nein';*/
 }
+figuredesc[data-parsererror]:before{
+  color:red;
+  content:attr(data-parsererror);
+  display:block;
+}
 </style>
 <script>
+function generateDiagram(viewer){
+  var codeid = viewer.dataset.structcodeId;
+  var sourcecode = document.querySelector('#'+codeid);
+  var diagram;
+  if(sourcecode.value)
+    diagram = StructDiagram.parseStructCode(sourcecode.value);
+  else
+    diagram = StructDiagram.parseStructCode(sourcecode.textContent);
+  while(viewer.children.length>0)
+    viewer.removeChild(viewer.firstChild);
+  viewer.appendChild(diagram);
+  return diagram;
+}
+function generateStructureView(diagram, xmlviewid){
+//data-structcode-xml
+  var xmllines = diagram.outerHTML
+      .replace(/>(?=<)/g, '>\n')
+      .split('\n');
+  var indended = '';
+  var indent = '';
+  for(var l in xmllines){
+    if(xmllines[l].indexOf('</')>=0){
+      if(xmllines[l].indexOf('<struct-')<0)
+        indent = indent.substr(2);
+      indended+=indent+xmllines[l]+'\n';
+    }else{
+      indended+=indent+xmllines[l]+'\n';
+      indent+='  ';
+    }
+  }
+  document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g,'<$1');
+}
 function generateViews(){
   //document.body.style.
   var allViews = document.querySelectorAll('.structview');
   for(var i=0;i<allViews.length;i++){
-    var codeid = allViews[i].dataset.structcodeId;
-    var sourcecode = document.querySelector('#'+codeid);
-    var diagram = StructDiagram.parseStructCode(sourcecode.textContent);
-    allViews[i].appendChild(diagram);
-    var xmllines = allViews[i].innerHTML
-        .replace(/>(?=<)/g, '>\n')
-        .split('\n');
-    var indended = '';
-    var indent = '';
-    for(var l in xmllines){
-      if(xmllines[l].indexOf('</')>=0){
-        if(xmllines[l].indexOf('<struct-')<0)
-          indent = indent.substr(2);
-        indended+=indent+xmllines[l]+'\n';
-      }else{
-        indended+=indent+xmllines[l]+'\n';
-        indent+='  ';
+    try{
+      generateStructureView(generateDiagram(allViews[i]), allViews[i].dataset.structcodeXml);
+    }catch(e){
+      var codeid = allViews[i].dataset.structcodeId;
+      var sourcecode = document.querySelector('#'+codeid);
+      var erroritem = sourcecode.parentNode.lastElementChild;
+      console.warn('parser:', e);
+      if(e instanceof StructCodeParseException){
+        erroritem.dataset.parsererror = e.toString();
       }
     }
-    document.getElementById('xmlview').textContent = indended.replace(/<(\/)?struct-/g,'<$1');
   }
 }
 window.addEventListener('DOMContentLoaded', generateViews);
+
+function updateContent(ta, e){
+  var viewer = document.querySelector('.structview[data-structcode-id="'+ta.id+'"]');
+  var codeid = viewer.dataset.structcodeId;
+  var sourcecode = document.querySelector('#'+codeid);
+  var erroritem = sourcecode.parentNode.lastElementChild;
+  try{
+    erroritem.dataset.parsererror = '';
+    generateStructureView(generateDiagram(viewer), viewer.dataset.structcodeXml);
+  }catch(e){
+    console.warn('parser:', e);
+    if(e instanceof StructCodeParseException){
+      erroritem.dataset.parsererror = e.toString();
+    }
+  }
+}
+function checkCurrentContent(ta, e){
+  clearTimeout(window.nextUpdate);
+  window.nextUpdate = setTimeout(function(){updateContent(ta, e)}, 500);
+}
+
 </script>
 </head>
 <body>
@@ -73,7 +122,7 @@ window.addEventListener('DOMContentLoaded', generateViews);
 <h1>Structogram Viewer</h1>
 </div>
 <figure>
-<pre id="sample1" class="structcode" data-caption="Beispiel 1">
+<textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
 Initialisiere Programm
 IF: Alles OK?
   schreibe "Willkommen"
@@ -92,16 +141,16 @@ LOOP: bis Wert >10
   erhöhe Wert um 1
 ENDLOOP:
 RETURN: irgendwas
-</pre>
+</textarea>
 <figuredesc>Sourcecode</figuredesc>
+</figure>
+<figure>
+<div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview"></div>
+<figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
 <figure>
 <div id="xmlview"></div>
 <figuredesc>Structured view</figuredesc>
-</figure>
-<figure>
-<div class="structview" data-structcode-id="sample1"></div>
-<figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
 </div>
 </body>

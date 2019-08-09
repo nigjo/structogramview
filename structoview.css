@@ -1,3 +1,8 @@
+.structcode{
+  min-width:40em;
+  min-height:30em;
+  resize:vertical;
+}
 struct-diagram{
   --decision-then:'then';
   --decision-else:'else';
@@ -31,6 +36,7 @@ struct-decision:before,struct-choose:before{
 }
 struct-decision>struct-block{
   position: relative;
+  vertical-align: top;
 }
 struct-decision>struct-block:before{
   position: absolute;
