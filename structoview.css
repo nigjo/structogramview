@@ -1,0 +1,105 @@
+struct-diagram{
+  --decision-then:'then';
+  --decision-else:'else';
+}
+struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break{
+  display:block;
+  box-sizing: border-box;
+}
+struct-decision>struct-block,struct-choose>struct-block{
+  display: table-cell;
+}
+struct-sequence,struct-decision,struct-choose,struct-loop,struct-iteration,struct-call,struct-break{
+  padding:.25em;
+  background-color:white;
+  border-top:1px solid black;
+  border-left:1px solid black;
+}
+
+struct-decision,struct-choose{
+  display:table;
+  width:100%;
+  box-sizing: border-box;
+  padding:0px;
+  padding-top:2em;
+}
+struct-decision:before,struct-choose:before{
+  display:table-caption;
+  content: attr(condition);
+  text-align: center;
+  height:0;
+}
+struct-decision>struct-block{
+  position: relative;
+}
+struct-decision>struct-block:before{
+  position: absolute;
+  top:-1.25rem;
+  font-style: italic;
+  font-size: .75em;
+  color:gray;
+}
+struct-decision>struct-block:last-child:before{
+  content:var(--decision-else);
+  right:.25em;
+}
+struct-decision>struct-block:first-child:before{
+  content:var(--decision-then);
+  left: .25em;
+}
+struct-iteration:before{
+  content:attr(condition);
+  display:block;
+  height:0px;
+  position:relative;
+  top:-1.5em;
+  left:-1em;
+}
+struct-iteration{
+  padding:0px;
+  padding-top:2em;
+  padding-left:1.5em;
+}
+struct-loop{
+  padding:0px;
+  padding-bottom:2em;
+  padding-left:1.5em;
+}
+struct-loop:after{
+  display:block;
+  content:attr(condition);
+  height:0px;
+  position:relative;
+  bottom:-.5em;
+  left:-1em;
+}
+struct-diagram{
+  font-family:sans-serif;
+  display: inline-block;
+  min-width: 20em;
+  line-height: 1.5em;
+  padding:.5em;
+  background-color: lightblue;
+}
+struct-diagram>*{
+  border-right:1px solid black;
+}
+struct-diagram>*:last-child{
+  border-bottom:1px solid black;
+}
+struct-block>struct-sequence{
+  min-width:2em;
+  min-height:2em;
+}
+struct-decision>struct-block>*{
+  border-left:none;
+}
+struct-block:not(:first-child){
+  border-left:1px solid black;
+}
+struct-decision>struct-block>*:last-child,struct-loop>struct-block>*:last-child{
+  border-bottom: 1px solid black;
+}
+struct-loop>struct-block>*:first-child{
+  border-top:none;
+}

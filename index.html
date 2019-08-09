@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Struktogram Viewer</title>
+<link rel="stylesheet" href="structoview.css">
+<script src="structoview.js"></script>
+<style>
+figure{
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1em;
+  padding:.25em;
+  padding-bottom: 0;
+  border:1px dotted gray;
+}
+figuredesc{
+  border-top:1px dotted gray;
+  width:100%;
+  display: block;
+  margin-top: .5em;
+  background-color: lightgray;
+  padding: .25em;
+  font-family: sans-serif;
+  position: relative;
+  left: -.25em;
+}
+#header{
+  display:block;
+  margin: .5em;
+}
+#xmlview{
+  white-space:pre-wrap;
+  font-family:Consolas;
+}
+struct-diagram{
+  /*--decision-then:'ja';*/
+  /*--decision-else:'nein';*/
+}
+</style>
+<script>
+function generateViews(){
+  //document.body.style.
+  var allViews = document.querySelectorAll('.structview');
+  for(var i=0;i<allViews.length;i++){
+    var codeid = allViews[i].dataset.structcodeId;
+    var sourcecode = document.querySelector('#'+codeid);
+    var diagram = StructDiagram.parseStructCode(sourcecode.textContent);
+    allViews[i].appendChild(diagram);
+    var xmllines = allViews[i].innerHTML
+        .replace(/>(?=<)/g, '>\n')
+        .split('\n');
+    var indended = '';
+    var indent = '';
+    for(var l in xmllines){
+      if(xmllines[l].indexOf('</')>=0){
+        if(xmllines[l].indexOf('<struct-')<0)
+          indent = indent.substr(2);
+        indended+=indent+xmllines[l]+'\n';
+      }else{
+        indended+=indent+xmllines[l]+'\n';
+        indent+='  ';
+      }
+    }
+    document.getElementById('xmlview').textContent = indended.replace(/<(\/)?struct-/g,'<$1');
+  }
+}
+window.addEventListener('DOMContentLoaded', generateViews);
+</script>
+</head>
+<body>
+<div style="display:inline-block;margin:0">
+<div id="header">
+<h1>Structogram Viewer</h1>
+</div>
+<figure>
+<pre id="sample1" class="structcode" data-caption="Beispiel 1">
+Initialisiere Programm
+IF: Alles OK?
+  schreibe "Willkommen"
+  Spiele Fanfare
+ELSE:
+  Gebe Fehlermeldung aus.
+  LOOP:
+    mach was
+  ENDLOOP: was denn?
+ENDIF:
+FOR: 1 bis 10
+  addiere zähler zur Summe
+ENDFOR:
+setze Wert = 0
+LOOP: bis Wert >10
+  erhöhe Wert um 1
+ENDLOOP:
+RETURN: irgendwas
+</pre>
+<figuredesc>Sourcecode</figuredesc>
+</figure>
+<figure>
+<div id="xmlview"></div>
+<figuredesc>Structured view</figuredesc>
+</figure>
+<figure>
+<div class="structview" data-structcode-id="sample1"></div>
+<figuredesc>Nassi-Shniderman-Diagram</figuredesc>
+</figure>
+</div>
+</body>
+</html>
