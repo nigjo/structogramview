@@ -6,6 +6,14 @@
 <script src="structoview.js"></script>
 <link rel="stylesheet" href="structoedit.css">
 <script src="structoedit.js"></script>
+<script src="html2canvas.min.js"></script>
+<script>
+window.addEventListener('load', function(){
+html2canvas(document.querySelector(".structview")).then(canvas => {
+    document.body.appendChild(canvas)
+});
+});
+</script>
 </head>
 <body>
 <div style="display:inline-block;margin:0">
