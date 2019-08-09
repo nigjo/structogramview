@@ -4,8 +4,8 @@
   resize:vertical;
 }
 struct-diagram{
-  --decision-then:'then';
-  --decision-else:'else';
+  --decision-then:'true';
+  --decision-else:'false';
 }
 struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break{
   display:block;
