@@ -155,7 +155,7 @@ customElements.define('struct-iteration',StructIteration);
 customElements.define('struct-call',StructCall);
 customElements.define('struct-break',StructBreak);
 
-function StructCodeParseExceptionStructCodeParseException(linenum, line, error){
+function StructCodeParseException(linenum, line, error){
   this.linenum=linenum;
   this.line = line;
   this.contextError = error?error.toString():'unknown';
