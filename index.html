@@ -23,6 +23,16 @@ ELSE:
 ENDIF:
 FOR: from 1 to 10
   add counter to sum
+  SELECT: index
+  CASE: 1
+    print "first"
+  CASE: 5
+    print "center"
+  CASE: 10
+    print "last"
+  DEFAULT:
+    print index
+  ENDSELECT:
 ENDFOR:
 print current sum
 LOOP: 

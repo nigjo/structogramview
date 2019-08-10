@@ -1,11 +1,13 @@
 class StructElement extends HTMLElement {
+  getName(){
+    return this.constructor.name.substr(6).toUpperCase();
+  }
 }
 class StructBlock extends StructElement {
 }
 class StructContainer extends StructElement {
   set condition(condition){this.setAttribute('condition',condition);}
   get condition(){return this.getAttribute('condition');}
-
   setBlock(index, block){
     if(this.children.length<index)
       throw "IndexOutOfBound: "+index+' > '+(this.children.length-1);
@@ -26,6 +28,9 @@ class StructContainer extends StructElement {
 class StructSequence extends StructElement {
 }
 class StructDecision extends StructContainer {
+  getName(){
+    return "IF";
+  }
   set thenBlock(block){
     this.setBlock(0, block);
   }
@@ -42,6 +47,9 @@ class StructDecision extends StructContainer {
   }
 }
 class StructChoose extends StructContainer {
+  getName(){
+    return "SELECT";
+  }
   set defaultBlock(block){
     this.lastBlock = block;
   }
@@ -53,6 +61,15 @@ class StructChoose extends StructContainer {
     }
     return this.lastBlock;
   }
+  createNextCase(){
+    var block = new StructCaseBlock();
+    this.insertBefore(block, this.defaultBlock);
+    return block;
+  }
+}
+class StructCaseBlock extends StructBlock {
+  set condition(condition){this.setAttribute('condition',condition);}
+  get condition(){return this.getAttribute('condition');}
 }
 class StructLoop extends StructContainer {
   set loopBlock(block){
@@ -63,6 +80,9 @@ class StructLoop extends StructContainer {
   }
 }
 class StructIteration extends StructLoop {
+  getName(){
+    return "FOR";
+  }
 }
 class StructCall extends StructSequence {
 }
@@ -75,12 +95,30 @@ class StructDiagram extends StructElement {
   static parseStructCode(structCode){
     var stack = [new StructDiagram()];
     
+    var lastlineindex;
     var lines = structCode.split('\n');
+
+    function checkBlock(blockname){
+      var stackblock=stack[0].getName();
+      if(stack[0] instanceof StructBlock){
+        stackblock=stack[1].getName();
+      }
+      if(stackblock!==blockname){
+        throw 'illegal end of block. Expecting END'+ stackblock+':';
+      }
+    }
+    function checkEmptyBlock(block){
+      if(block.children.length==0){
+        block.appendChild(new StructSequence());//.textContent=' ';
+      }
+    }
+
     for(var i=0;i<lines.length;i++){
       try{
         var trimmed = lines[i].trim();
         if(trimmed.length==0)
           continue;
+        lastlineindex = i;
         if(trimmed.startsWith('IF:')){
           var item = new StructDecision();
           item.condition = trimmed.substr(3).trim();
@@ -90,11 +128,40 @@ class StructDiagram extends StructElement {
           var block = stack.shift();
           stack.unshift(stack[0].elseBlock);
         }else if(trimmed.startsWith('ENDIF:')){
+          checkBlock('IF');
           var block = stack.shift();
           var item = stack.shift();
-          if(item.elseBlock.children.length==0){
-            item.elseBlock.appendChild(new StructSequence());
+          checkEmptyBlock(item.elseBlock);
+          stack[0].appendChild(item);
+        }else if(trimmed.startsWith('SELECT:')){
+          var item = new StructChoose();
+          item.condition = trimmed.substr(7).trim();
+          stack.unshift(item);
+        }else if(trimmed.startsWith('CASE:')){
+          var item = stack[0];
+          if(item instanceof StructBlock){
+            var prevcase = stack.shift();
+            checkEmptyBlock(prevcase);
           }
+          var block = stack[0].createNextCase();
+          block.condition = trimmed.substr(5).trim();
+          stack.unshift(block);
+        }else if(trimmed.startsWith('DEFAULT:')){
+          var item = stack[0];
+          if(item instanceof StructBlock){
+            var prevcase = stack.shift();
+            checkEmptyBlock(prevcase);
+          }
+          stack.unshift(stack[0].defaultBlock);
+        }else if(trimmed.startsWith('ENDSELECT:')){
+          checkBlock('SELECT');
+          var item = stack[0];
+          if(item instanceof StructBlock){
+            var prevcase = stack.shift();
+            checkEmptyBlock(prevcase);
+          }
+          var item = stack.shift();
+          checkEmptyBlock(item.defaultBlock);
           stack[0].appendChild(item);
         }else if(trimmed.startsWith('FOR:')){
           var item = new StructIteration();
@@ -102,11 +169,10 @@ class StructDiagram extends StructElement {
           stack.unshift(item);
           stack.unshift(item.loopBlock);
         }else if(trimmed.startsWith('ENDFOR:')){
+          checkBlock('FOR');
           var block = stack.shift();
           var item = stack.shift();
-          if(item.loopBlock.children.length==0){
-            item.loopBlock.appendChild(new StructSequence());
-          }
+          checkEmptyBlock(item.loopBlock);
           stack[0].appendChild(item);
         }else if(trimmed.startsWith('LOOP:')){
           var item;
@@ -119,14 +185,13 @@ class StructDiagram extends StructElement {
           stack.unshift(item);
           stack.unshift(item.loopBlock);
         }else if(trimmed.startsWith('ENDLOOP:')){
+          checkBlock('LOOP');
           var block = stack.shift();
           var item = stack.shift();
           if(item instanceof StructLoop && trimmed!=='ENDLOOP:'){
             item.condition = trimmed.substr(8).trim();
           }
-          if(item.loopBlock.children.length==0){
-            item.loopBlock.appendChild(new StructSequence());
-          }
+          checkEmptyBlock(item.loopBlock);
           stack[0].appendChild(item);
         } else if(trimmed.startsWith('CALL:')) {
           stack[0].appendChild(new StructCall()).textContent = trimmed.substr(5).trim();
@@ -141,7 +206,15 @@ class StructDiagram extends StructElement {
         throw new StructCodeParseException(i, lines[i], e);
       }
     }
-
+    if(stack.length!==1){
+      var blockname=stack[0].getName();
+      if(stack[0] instanceof StructBlock){
+        blockname=stack[1].getName();
+      }
+      throw new StructCodeParseException(lastlineindex,lines[lastlineindex],
+      'illegal stack size. Expecting END'+ blockname+':');
+    }
+    
     return stack.shift();
   }
 }
@@ -149,7 +222,8 @@ customElements.define('struct-diagram',StructDiagram);
 customElements.define('struct-sequence',StructSequence);
 customElements.define('struct-block',StructBlock);
 customElements.define('struct-decision',StructDecision);
-customElements.define('struct-choose',StructChoose);
+customElements.define('struct-select',StructChoose);
+customElements.define('struct-case',StructCaseBlock);
 customElements.define('struct-loop',StructLoop);
 customElements.define('struct-iteration',StructIteration);
 customElements.define('struct-call',StructCall);
