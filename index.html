@@ -7,6 +7,23 @@
 <script src="structoview.js"></script>
 <link rel="stylesheet" href="structoedit.css">
 <script src="structoedit.js"></script>
+<script>
+function loadSample(){
+  loadSourceTo('sample1.sc', 'sample1');
+}
+function loadSourceTo(filename, sourceid){
+  var client = new XMLHttpRequest();
+  client.overrideMimeType('text/plain');
+  client.addEventListener('load', function() {
+    document.getElementById(sourceid).innerHTML = client.responseText;
+    var view=document.querySelector(".structview[data-structcode-id='"+sourceid+"']");
+    updateView(view);
+  });
+  client.open('GET', filename);
+  client.send();
+}
+window.addEventListener('DOMContentLoaded', loadSample);
+</script>
 </head>
 <body>
 <div style="display:inline-block;margin:0">
@@ -15,33 +32,6 @@
 </div>
 <figure>
 <textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
-initialize application
-IF: everything OK?
-  play some tone
-ELSE:
-  output error message
-ENDIF:
-FOR: from 1 to 10
-  add counter to sum
-  SELECT: index
-  CASE: 1
-    print "first"
-  CASE: 5
-    print "center"
-  CASE: 10
-    print "last"
-  DEFAULT:
-    print index
-  ENDSELECT:
-ENDFOR:
-print current sum
-LOOP: 
-  IF: current sum is odd
-    add 1 to sum
-  ENDIF:
-  devide sum by 2
-ENDLOOP: sum &lt; 10
-RETURN: calculated result
 </textarea>
 <figuredesc>Sourcecode</figuredesc>
 </figure>

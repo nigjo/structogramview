@@ -30,14 +30,11 @@ function generateStructureView(diagram, xmlviewid){
   }
   document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g,'<$1');
 }
-function generateViews(){
-  //document.body.style.
-  var allViews = document.querySelectorAll('.structview');
-  for(var i=0;i<allViews.length;i++){
+function updateView(structview){
     try{
-      generateStructureView(generateDiagram(allViews[i]), allViews[i].dataset.structcodeXml);
+      generateStructureView(generateDiagram(structview), structview.dataset.structcodeXml);
     }catch(e){
-      var codeid = allViews[i].dataset.structcodeId;
+      var codeid = structview.dataset.structcodeId;
       var sourcecode = document.querySelector('#'+codeid);
       var erroritem = sourcecode.parentNode.lastElementChild;
       console.warn('parser:', e);
@@ -45,6 +42,12 @@ function generateViews(){
         erroritem.dataset.parsererror = e.toString();
       }
     }
+}
+function generateViews(){
+  //document.body.style.
+  var allViews = document.querySelectorAll('.structview');
+  for(var i=0;i<allViews.length;i++){
+    updateView(allViews[i]);
   }
 }
 window.addEventListener('DOMContentLoaded', generateViews);
