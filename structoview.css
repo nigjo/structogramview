@@ -142,3 +142,24 @@ struct-select>*>*:last-child{
 struct-loop>struct-block>*:first-child{
   border-top:none;
 }
+struct-break{
+  padding-left:1.5em;
+  position:relative;
+}
+struct-break:before{
+  background-image:url(line_bl_tr.png);
+  top:0;
+}
+struct-break:after{
+  background-image:url(line_tl_br.png);
+  bottom:0;
+}
+struct-break:before,struct-break:after{
+  content:'';
+  background-size: 100% 100%;
+  background-position: center;
+  position:absolute;
+  width:1.5em;
+  height:1em;
+  left:0;
+}
