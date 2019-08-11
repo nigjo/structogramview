@@ -130,9 +130,9 @@ struct-select>struct-case:after{
 struct-decision>struct-block:before,struct-select>struct-case:first-of-type:before,struct-select>struct-block:before {
   content:'';
   position:absolute;
-  top:-2em;
+  top:-2.25em;
   width:100%;
-  height:2em;
+  height:2.25em;
   box-sizing: border-box;
   background-position: center;
   background-size: 100% 100%;
