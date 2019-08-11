@@ -30,22 +30,34 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <div id="header">
 <h1>Structogram Viewer</h1>
 </div>
-<figure>
+<figure id="source">
 <textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
 </textarea>
 <figuredesc>Sourcecode</figuredesc>
 </figure>
-<figure>
+<figure id="diagram">
 <div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview"></div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
-<figure>
-<div id="xmlview"></div>
+<figure id="structure">
+<div class="structtree" id="xmlview"></div>
 <figuredesc>Structured view</figuredesc>
 </figure>
 </div>
-<div style="position:absolute;top:0;right:0">
-<a href="https://github.com/nigjo/structogramview/"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+<div id="githublink" style="position:absolute;top:0;right:0">
 </div>
+<script>
+var offline='<a href="https://github.com/nigjo/structogramview/">Fork me on GitHub</a>';
+var online='<a href="https://github.com/nigjo/structogramview/"> \
+<img width="149" height="149" \
+  src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" \
+  class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>';
+console.log(window.location.protocol);
+if(window.location.protocol==='file:'){
+  document.getElementById('githublink').innerHTML = offline;
+}else{
+  document.getElementById('githublink').innerHTML = online;
+}
+</script>
 </body>
 </html>
