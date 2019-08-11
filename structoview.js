@@ -119,7 +119,9 @@ class StructDiagram extends StructElement {
         if(trimmed.length==0)
           continue;
         lastlineindex = i;
-        if(trimmed.startsWith('IF:')){
+        if(trimmed.startsWith('CAPTION:')){
+          stack[0].caption = trimmed.substr(8).trim();
+        }else if(trimmed.startsWith('IF:')){
           var item = new StructDecision();
           item.condition = trimmed.substr(3).trim();
           stack.unshift(item);

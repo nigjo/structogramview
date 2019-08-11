@@ -2,6 +2,14 @@ struct-diagram{
   --decision-then:'true';
   --decision-else:'false';
 }
+struct-diagram:before{
+  display: block;
+  content:attr(caption);
+  font-weight: bold;
+  font-size: 1.25em;
+  line-height: 1.5em;
+  padding-left: .25em;
+}
 struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break{
   display:block;
   box-sizing: border-box;
