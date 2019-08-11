@@ -21,7 +21,7 @@ struct-decision,struct-select{
   width:100%;
   box-sizing: border-box;
   padding:0px;
-  padding-top:2em;
+  padding-top:2.25em;
   position:relative;
 }
 struct-decision:after,struct-select:after{
