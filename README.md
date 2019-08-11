@@ -1,29 +1,47 @@
-# structogramview
+# Structogram Viewer
 A browser based structogram (Nassi–Shneiderman diagram) viewer (and creator)
 
-![screenshot with source- structure- and diagram view](Zwischenablage01.png)
+![screenshot with source- structure- and diagram view](Screenshot_Struktogram_Viewer.png)
 
-At this early stage you have to edit the `index.html` direktly to write the pseudecode.
-The pseudecode is not desigend to be compilable. One line per Diagram-Element, line-merging
-is not supported.
+You can type the Psdeudocode "StuctCode" in the "Sourcecode" block. The diagram
+and the tree view will be updated directly.
+The pseudecode is not desigend to be compilable.
+One line per Diagram-Element, line-merging is not supported.
+
+_TODO: Treat sequences of "*comment lines*" as a single "sequence element"._
+
+## Commands
+
 Every *Command* has to be at the start of a line and upper-case. Indentation is ignored.
+
+`CAPTION:`
+: can be used once on diagram level to add a diagram title.
 
 `IF:`, `ELSE:`, `ENDIF:`
 : Create an if-else-Block. write your condition in the same line
   as the `IF:` command.
 
+`SELECT:`, `CASE:`, `DEFAULT:`, `ENDSELECT:`
+: create a "multiple branching block". The `SELECT:` and every `CASE:` should have a
+  "condition" defined. The visual representation is not DIN 66261 compliant.
+
 `FOR:`, `ENDFOR:`
-: create an iteration
+: create an iteration. No assumption is made on the text of the condition.
 
 `LOOP:`, `ENDLOOP:`
-: create an iteration
+: create a loop or iteration.
+  A condition set on `LOOP:` will create a "test first loop" (iteration).
+  A condition set on `ENDLOOP:` will create a "test last loop" (loop).
 
 `CALL:`
-: a call to another routine/method/function
+: a call to another routine/method/function.
 
 `BREAK:` or `RETURN:`
-: a break from the current block.
+: a break from the current block or diagram.
 
 Every line not starting with a *Command* is treated as a simple *sequence*.
 
-TODO: Treat sequences of "*comment lines*" as a single "sequence element".
+## taking screenshots
+
+currently there is no direct support to save the generated diagram. You have to use
+your browsers oder OS' functions to take screenshots.
