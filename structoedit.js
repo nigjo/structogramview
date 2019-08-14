@@ -31,17 +31,23 @@ function generateStructureView(diagram, xmlviewid){
   document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g,'<$1');
 }
 function updateView(structview){
-    try{
-      generateStructureView(generateDiagram(structview), structview.dataset.structcodeXml);
-    }catch(e){
-      var codeid = structview.dataset.structcodeId;
-      var sourcecode = document.querySelector('#'+codeid);
-      var erroritem = sourcecode.parentNode.lastElementChild;
-      console.warn('parser:', e);
-      if(e instanceof StructCodeParseException){
-        erroritem.dataset.parsererror = e.toString();
-      }
+  var codeid = structview.dataset.structcodeId;
+  var sourcecode = document.querySelector('#'+codeid);
+  var erroritem = sourcecode.parentNode.lastElementChild;
+  try{
+    erroritem.dataset.parsererror = '';
+    var diagram = generateDiagram(structview);
+    generateStructureView(diagram, structview.dataset.structcodeXml);
+    var uscompact = document.getElementById('usecompactselect');
+    if(uscompact && uscompact.checked){
+      diagram.classList.add('compactselect');
     }
+  }catch(e){
+    console.warn('parser:', e);
+    if(e instanceof StructCodeParseException){
+      erroritem.dataset.parsererror = e.toString();
+    }
+  }
 }
 function generateViews(){
   //document.body.style.
@@ -52,20 +58,10 @@ function generateViews(){
 }
 window.addEventListener('DOMContentLoaded', generateViews);
 
-function updateContent(ta, e){
-  var viewer = document.querySelector('.structview[data-structcode-id="'+ta.id+'"]');
-  var codeid = viewer.dataset.structcodeId;
-  var sourcecode = document.querySelector('#'+codeid);
-  var erroritem = sourcecode.parentNode.lastElementChild;
-  try{
-    erroritem.dataset.parsererror = '';
-    generateStructureView(generateDiagram(viewer), viewer.dataset.structcodeXml);
-  }catch(e){
-    console.warn('parser:', e);
-    if(e instanceof StructCodeParseException){
-      erroritem.dataset.parsererror = e.toString();
-    }
-  }
+function updateContent(ta, keyevent){
+  var sourceid = typeof ta === 'string'?ta:ta.id;
+  var viewer = document.querySelector('.structview[data-structcode-id="'+sourceid+'"]');
+  updateView(viewer);
 }
 function checkCurrentContent(ta, e){
   clearTimeout(window.nextUpdate);

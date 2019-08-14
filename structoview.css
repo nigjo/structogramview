@@ -49,7 +49,9 @@ struct-decision>struct-block, struct-select>*{
   position: relative;
   vertical-align: top;
 }
-struct-decision>struct-block:after,struct-select>struct-case:after{
+struct-decision>struct-block:after,
+struct-select>struct-case:after,
+struct-select>struct-block:after{
   position: absolute;
   top:-1.25rem;
   font-style: italic;
@@ -113,13 +115,17 @@ struct-block>struct-sequence{
 struct-block>struct-sequence:empty:after{
   content: ' ';
 }
-struct-decision>struct-block>*,struct-select>struct-case>*,struct-select>struct-block>*{
+struct-decision>struct-block>*,
+struct-select>struct-case>*,
+struct-select>struct-block>*{
   border-left:none;
 }
-struct-decision>struct-block:first-child:before,struct-select>struct-case:first-of-type:before {
+struct-decision>struct-block:first-child:before,
+struct-select>struct-case:first-of-type:before {
   background-image:url(line_tl_br.png);
 }
-struct-decision>struct-block:last-child:before,struct-select>struct-block:before {
+struct-decision>struct-block:last-child:before,
+struct-select>struct-block:before {
   background-image:url(line_bl_tr.png);
 }
 struct-select>struct-case:last-of-type:before{
@@ -127,7 +133,9 @@ struct-select>struct-case:last-of-type:before{
 struct-select>struct-case:after{
   content: attr(condition);
 }
-struct-decision>struct-block:before,struct-select>struct-case:first-of-type:before,struct-select>struct-block:before {
+struct-decision>struct-block:before,
+struct-select>struct-case:first-of-type:before,
+struct-select>struct-block:before {
   content:'';
   position:absolute;
   top:-2.25em;
@@ -170,4 +178,25 @@ struct-break:before,struct-break:after{
   width:1.5em;
   height:1em;
   left:0;
+}
+struct-diagram.compactselect struct-select{
+  display:flex;
+  flex-direction:column;
+  padding-left:1.5em;
+}
+struct-diagram.compactselect struct-select:after{
+  text-align: left;
+  left:.25em;
+}
+struct-diagram.compactselect struct-select>*:before{
+  background:none;
+}
+struct-diagram.compactselect struct-select>*:not(:first-child){
+  margin-top:1.5em;
+}
+struct-diagram.compactselect struct-select>*:first-child{
+  border-left:1px solid black;
+}
+struct-diagram.compactselect struct-select>struct-block:after{
+  content:'default';
 }

@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
 <meta charset="UTF-8">
 <title>Struktogram Viewer</title>
@@ -31,11 +31,12 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <h1>Structogram Viewer</h1>
 </div>
 <figure id="source">
-<textarea id="sample1" class="structcode" data-caption="Beispiel 1" onkeyup="checkCurrentContent(this,event)">
+<textarea id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
 </textarea>
 <figuredesc>Sourcecode</figuredesc>
 </figure>
 <figure id="diagram">
+<label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
 <div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview"></div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
