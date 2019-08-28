@@ -200,3 +200,25 @@ struct-diagram.compactselect struct-select>*:first-child{
 struct-diagram.compactselect struct-select>struct-block:after{
   content:'default';
 }
+struct-call{
+  padding-left:1em;
+  padding-right:1em;
+  position:relative;
+  min-height:2em;
+}
+struct-call:after,struct-call:before{
+  display:block;
+  width:.5em;
+  height:100%;
+  content:'';
+  position:absolute;
+  top:0px;
+}
+struct-call:after{
+  right:0em;
+  border-left:1px solid black;
+}
+struct-call:before{
+  left:0em;
+  border-right:1px solid black;
+}

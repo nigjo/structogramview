@@ -17,6 +17,7 @@ FOR: from 1 to 10
     print index
   ENDSELECT:
 ENDFOR:
+CALL: do something fancy to sum
 print current sum
 LOOP: 
   IF: current sum is odd
