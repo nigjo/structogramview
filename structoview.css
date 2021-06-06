@@ -3,6 +3,7 @@ struct-diagram{
   --decision-else:'false';
 }
 struct-diagram:before{
+  position:relative;
   display: block;
   content:attr(caption);
   font-weight: bold;

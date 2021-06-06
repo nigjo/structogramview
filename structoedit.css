@@ -1,5 +1,5 @@
 .structcode{
-  min-width:40em;
+  min-width:30em;
   min-height:30em;
   resize:vertical;
 }
@@ -43,4 +43,3 @@ figuredesc[data-parsererror]:before{
   content:attr(data-parsererror);
   display:block;
 }
-structcode
