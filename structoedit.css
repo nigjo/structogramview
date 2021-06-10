@@ -43,3 +43,6 @@ figuredesc[data-parsererror]:before{
   content:attr(data-parsererror);
   display:block;
 }
+#imageview{
+  background-color:lightblue;
+}

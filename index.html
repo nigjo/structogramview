@@ -7,6 +7,7 @@
 <script src="structoview.js"></script>
 <link rel="stylesheet" href="structoedit.css">
 <script src="structoedit.js"></script>
+<script src="structosvg.js"></script>
 <script>
 function loadSample(){
   loadSourceTo('sample1.sc', 'sample1');
@@ -41,7 +42,7 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="imageview"></div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
-<figure id="imageview" download="diagram.svg">
+<figure id="imageview">
 <svg xmlns="http://www.w3.org/2000/svg">
 <style>
 :root{
@@ -50,11 +51,12 @@ window.addEventListener('DOMContentLoaded', loadSample);
   fill:white;
   xfill:rgba(255,255,255,.25)
 }
-.struct-diagram>rect{fill:lightblue;}
+.xstruct-diagram>rect{fill:lightblue;}
 line{stroke:black;}
 text{font-family:sans-serif;fill:black;}
 </style>
 </svg>
+<div><a href="diagram.svg" onclick="downloadSvg(event);return false;">📥</a>
 <figuredesc>SVG Grafik</figuredesc>
 </figure>
 <figure id="structure">
