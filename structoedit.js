@@ -39,7 +39,7 @@ function updateView(structview){
     var diagram = generateDiagram(structview);
     generateStructureView(diagram, structview.dataset.structcodeXml);
     let svggen = new SVGGenerator();
-    svggen.generateDownloadImage(diagram, structview.dataset.structcodeSvg);
+    svggen.generateDownloadImage(diagram, structview);
     var uscompact = document.getElementById('usecompactselect');
     if(uscompact && uscompact.checked){
       diagram.classList.add('compactselect');

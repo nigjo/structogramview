@@ -2,16 +2,46 @@
 
 function downloadSvg(event) {
   event.preventDefault();
-  console.log(SVGGenerator.SVGLOGGER, event);
-  let dlLink = document.createElement("a")
+  let dlLink = document.createElement("a");
   dlLink.style.display = "none";
   let svg = document.querySelector("#imageview svg");
-  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  var file = new Blob([svg.outerHTML], {type: "application/svg"});
+  //svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  let resultDoc = document.implementation.createDocument(
+          SVGGenerator.SVGNS, "svg");
+  [...svg.attributes].forEach(attr => {
+    resultDoc.firstChild.setAttribute(attr.nodeName, attr.nodeValue);
+  });
+  for (let child of svg.children) {
+    console.log(child);
+    resultDoc.firstChild.append(child.cloneNode(true));
+  }
+  if (svg.dataset.structcodeId) {
+    var codeid = svg.dataset.structcodeId;
+    var sourcecode = document.querySelector('#' + codeid);
+    var sourceText;
+    if (sourcecode.value)
+      sourceText = sourcecode.value;
+    else
+      sourceText = sourcecode.textContent;
+    let metadata = resultDoc.querySelector("metadata");
+    if (!metadata) {
+      metadata = resultDoc.createElementNS(SVGGenerator.SVGNS, "metadata");
+      metadata.append("\n");
+      resultDoc.firstChild.insertBefore(metadata, resultDoc.firstChild.firstChild);
+    }
+    let sourcecopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:source");
+    //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
+    sourcecopy.append(resultDoc.createCDATASection(sourceText));
+    metadata.append(sourcecopy, "\n");
+  }
+  var serializer = new XMLSerializer();
+  var xmlString = serializer.serializeToString(resultDoc);
+  var file = new Blob([xmlString], {type: "application/svg"});
   var data = URL.createObjectURL(file);
   dlLink.href = data;
   dlLink.download = "diagram.svg";
   dlLink.click();
+  console.log(SVGGenerator.SVGLOGGER, "download svg");
   setTimeout(function () {
     dlLink.remove();
     window.URL.revokeObjectURL(data);
@@ -22,6 +52,7 @@ function downloadSvg(event) {
 class SVGGenerator {
   static SVGLOGGER = "svgimage";
   static SVGNS = "http://www.w3.org/2000/svg";
+  static SELFNS = "https://nigjo.github.io/structogramview/";
 
   addBorder(group, styleVal, x1, y1, x2, y2) {
     if (styleVal !== '0px') {
@@ -34,12 +65,67 @@ class SVGGenerator {
     }
   }
 
-  addText(container, structElement, x, y) {
+  addText(container, structElement, attribute = null) {
+    let dx = 0;
+    //*for (let i = 0; i < structElement.childNodes.length; i++)*/ {
+    let child = attribute
+            ? structElement.getAttributeNode(attribute)
+            : structElement.childNodes[0];
+    //console.log(attribute, child);
+    if (child instanceof Text) {
+      if (child.wholeText.trim().length === 0) {
+        return undefined;
+      }
+    } else if (child instanceof Attr) {
+      if (child.value.trim().length === 0) {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+    let cstyle = getComputedStyle(structElement, attribute ? ":after" : null);
+    let sx = parseFloat(cstyle.marginLeft.replace("px", ""))
+            + parseFloat(cstyle.paddingLeft.replace("px", ""));
+    let sy = parseFloat(cstyle.marginTop.replace("px", ""))
+            + parseFloat(cstyle.paddingTop.replace("px", ""));
+
+    let textContent = attribute ? child.value : child.wholeText;
+    let span = document.createElement("span");
+    structElement.style.position = "relative";
+    span.style.color = "red";
+    span.style.display = "inline-block";
+    span.style.position = "absolute";
+    span.style.left = sx;
+    span.style.top = sy;
+    span.textContent = textContent;
+    structElement.append(span);
+    let textWidth = span.scrollWidth;
+    let sstyle = getComputedStyle(structElement);
+    let baseline = parseFloat(sstyle.fontSize.replace("px", ""));
+    //console.log(textContent, cstyle, baseline);
+    span.remove();
+
     let text = document.createElementNS(SVGGenerator.SVGNS, "text");
-    text.setAttribute("x", x);
-    text.setAttribute("y", y);
-    text.append(structElement.textContent);
+    text.setAttribute("x", sx);
+    text.setAttribute("y", sy + baseline + 2);
+    text.setAttribute("textLength", textWidth);
+    text.append(textContent);
     container.appendChild(text);
+
+    dx += textWidth;
+
+    return text;
+  }
+
+  center(parent, text) {
+    text.setAttribute("x", (parent.scrollWidth - text.getAttribute("textLength")) / 2);
+  }
+
+  addWhiteShadow(text) {
+    text.after(text.cloneNode(true));
+    text.style.fill = "none";
+    text.style.stroke = "white";
+    text.style.strokeWidth = "2px";
   }
 
   addStructure(container, structElement, offsetx, offsety) {
@@ -70,12 +156,12 @@ class SVGGenerator {
       let tbRect = structElement.thenBlock.getBoundingClientRect();
       this.addBorder(group, "", 0, 0, tbRect.width, tbRect.top - cRect.top);
       this.addBorder(group, "", tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
-
-
+      let t = this.addText(group, structElement, "condition");
+      this.center(structElement, t);
+      this.addWhiteShadow(t);
     } else if (structElement instanceof StructSequence) {
       //let textHeight = cRect.height / 1.5;
-      this.addText(group, structElement,
-              this.textHeight * .20, this.textHeight * 1.4);
+      this.addText(group, structElement);
     } else if (structElement instanceof StructChoose) {
       console.log(structElement.lastChild);
       let ebRect = structElement.lastChild.getBoundingClientRect();
@@ -83,6 +169,9 @@ class SVGGenerator {
       this.addBorder(group, "",
               ebRect.left - cRect.left, ebRect.top - cRect.top,
               cRect.width, 0);
+      let t = this.addText(group, structElement, "condition");
+      this.center(structElement, t);
+      this.addWhiteShadow(t);
     }
 
     if (structElement instanceof StructContainer
@@ -98,15 +187,18 @@ class SVGGenerator {
     container.appendChild(group);
   }
 
-  generateDownloadImage(diagram, svgImageId) {
+  generateDownloadImage(diagram, viewer) {
     let bounding = diagram.getBoundingClientRect();
+
+    let svgImageId = viewer.dataset.structcodeSvg;
 
     let org = document.getElementById(svgImageId);
     let orgsvg = org.querySelector("svg");
     let orgstyles = orgsvg.querySelector("style");
 
-    this.textHeight = parseFloat(getComputedStyle(diagram, null)
-            .getPropertyValue("font-size"));
+    let dstyles = getComputedStyle(diagram, null);
+    this.textHeight = parseFloat(dstyles.getPropertyValue("font-size"));
+    this.lineHeight = parseFloat(dstyles.getPropertyValue("line-height"));
 
     //<svg xmlns="http://www.w3.org/2000/svg"></svg>
     let svg = orgsvg.cloneNode();
@@ -117,13 +209,12 @@ class SVGGenerator {
     //the "first child" is the original css text
     svgstyles.textContent = svgstyles.firstChild.textContent;
     svgstyles.append("svg{font-size:" + this.textHeight + "px}");
-    console.log(svgstyles);
     svg.appendChild(svgstyles);
 
     //console.log(SVGGenerator.SVGLOGGER,bounding,
     //    diagram.offsetLeft,diagram.offsetTop);
     this.addStructure(svg, diagram, bounding.left, bounding.top);
-
+    svg.dataset.structcodeId = viewer.dataset.structcodeId;
     orgsvg.replaceWith(svg);
   }
 
