@@ -54,7 +54,7 @@ struct-decision>struct-block:after,
 struct-select>struct-case:after,
 struct-select>struct-block:after{
   position: absolute;
-  top:-1.25rem;
+  top:-1.5em;
   font-style: italic;
   font-size: .75em;
   color:gray;
