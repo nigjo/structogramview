@@ -34,6 +34,14 @@ class SVGGenerator {
     }
   }
 
+  addText(container, structElement, x, y) {
+    let text = document.createElementNS(SVGGenerator.SVGNS, "text");
+    text.setAttribute("x", x);
+    text.setAttribute("y", y);
+    text.append(structElement.textContent);
+    container.appendChild(text);
+  }
+
   addStructure(container, structElement, offsetx, offsety) {
     let group = document.createElementNS(SVGGenerator.SVGNS, "g");
     group.setAttribute("class", structElement.nodeName.toLowerCase());
@@ -62,13 +70,12 @@ class SVGGenerator {
       let tbRect = structElement.thenBlock.getBoundingClientRect();
       this.addBorder(group, "", 0, 0, tbRect.width, tbRect.top - cRect.top);
       this.addBorder(group, "", tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
+
+
     } else if (structElement instanceof StructSequence) {
-      let text = document.createElementNS(SVGGenerator.SVGNS, "text");
-      let textHeight = cRect.height / 1.5;
-      text.setAttribute("x", textHeight * .20);
-      text.setAttribute("y", textHeight);
-      text.append(structElement.textContent);
-      group.appendChild(text);
+      //let textHeight = cRect.height / 1.5;
+      this.addText(group, structElement,
+              this.textHeight * .20, this.textHeight * 1.4);
     } else if (structElement instanceof StructChoose) {
       console.log(structElement.lastChild);
       let ebRect = structElement.lastChild.getBoundingClientRect();
@@ -98,18 +105,25 @@ class SVGGenerator {
     let orgsvg = org.querySelector("svg");
     let orgstyles = orgsvg.querySelector("style");
 
+    this.textHeight = parseFloat(getComputedStyle(diagram, null)
+            .getPropertyValue("font-size"));
+
     //<svg xmlns="http://www.w3.org/2000/svg"></svg>
-    let svg = document.createElementNS(SVGGenerator.SVGNS, "svg");
+    let svg = orgsvg.cloneNode();
     svg.setAttribute("width", bounding.width);
     svg.setAttribute("height", bounding.height);
 
-    svg.appendChild(orgstyles.cloneNode(true));
+    let svgstyles = orgstyles.cloneNode(true);
+    //the "first child" is the original css text
+    svgstyles.textContent = svgstyles.firstChild.textContent;
+    svgstyles.append("svg{font-size:" + this.textHeight + "px}");
+    console.log(svgstyles);
+    svg.appendChild(svgstyles);
 
     //console.log(SVGGenerator.SVGLOGGER,bounding,
     //    diagram.offsetLeft,diagram.offsetTop);
     this.addStructure(svg, diagram, bounding.left, bounding.top);
 
-    let next = org.cloneNode(false);
     orgsvg.replaceWith(svg);
   }
 
