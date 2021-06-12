@@ -12,7 +12,6 @@ function downloadSvg(event) {
     resultDoc.firstChild.setAttribute(attr.nodeName, attr.nodeValue);
   });
   for (let child of svg.children) {
-    console.log(child);
     resultDoc.firstChild.append(child.cloneNode(true));
   }
   if (svg.dataset.structcodeId) {
@@ -216,18 +215,19 @@ class SVGGenerator {
       if (structElement.parentElement instanceof StructDecision) {
         if (structElement === structElement.parentElement.firstElementChild) {
           group.setAttribute("class", "then");
-          structElement.setAttribute("data-key", "true");
         } else {
           group.setAttribute("class", "else");
-          structElement.setAttribute("data-key", "false");
         }
+        let after = getComputedStyle(structElement, ":after");
+        structElement.setAttribute("data-key", after.content
+                .replace(/^\"|\"$/g, '')
+                .replace(/\\(.)/g, '$1'));
         let t = this.addText(group, structElement, "data-key");
         t.setAttribute("class", "blocktitle");
         structElement.removeAttribute("data-key");
       } else {
         group.setAttribute("class", "block");
       }
-      console.log(structElement);
       //this.addText(group, structElement, "");
     } else if (structElement instanceof StructDecision) {
       group.setAttribute("class", "if");
@@ -257,7 +257,7 @@ class SVGGenerator {
               - this.lineHeight + this.textHeight - 1));
     } else if (structElement instanceof StructDiagram) {
       group.setAttribute("class", "diagram");
-      if(structElement.hasAttribute("caption")){
+      if (structElement.hasAttribute("caption")) {
         let t = this.addText(group, structElement, "caption", true);
         t.setAttribute("class", "caption");
       }
