@@ -107,6 +107,7 @@ class SVGGenerator {
               + parseFloat(astyle.paddingTop.replace("px", ""))
               + parseFloat(astyle.top.replace("px", ""));
     }
+    structElement.removeAttribute("style");
 
     let span = document.createElement("span");
     span.style.color = "red";
