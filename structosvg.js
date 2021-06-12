@@ -65,7 +65,7 @@ class SVGGenerator {
     }
   }
 
-  addText(container, structElement, attribute = null) {
+  addText(container, structElement, attribute = null, before = false) {
     let dx = 0;
     //*for (let i = 0; i < structElement.childNodes.length; i++)*/ {
     let child = attribute
@@ -83,15 +83,28 @@ class SVGGenerator {
     } else {
       return undefined;
     }
-    let cstyle = getComputedStyle(structElement, attribute ? ":after" : null);
+    structElement.style.position = "relative";
+    let textContent = attribute ? child.value : child.wholeText;
+    let cstyle = getComputedStyle(structElement, null);
     let sx = parseFloat(cstyle.marginLeft.replace("px", ""))
             + parseFloat(cstyle.paddingLeft.replace("px", ""));
     let sy = parseFloat(cstyle.marginTop.replace("px", ""))
             + parseFloat(cstyle.paddingTop.replace("px", ""));
+    if (attribute) {
+      let astyle = getComputedStyle(structElement,
+              (before ? ":before" : ":after"));
+      if (astyle.position === "absolute") {
+        sx = sy = 0;
+      }
+      sx += parseFloat(astyle.marginLeft.replace("px", ""))
+              + parseFloat(astyle.paddingLeft.replace("px", ""))
+              + parseFloat(astyle.left.replace("px", ""));
+      sy += parseFloat(astyle.marginTop.replace("px", ""))
+              + parseFloat(astyle.paddingTop.replace("px", ""))
+              + parseFloat(astyle.top.replace("px", ""));
+    }
 
-    let textContent = attribute ? child.value : child.wholeText;
     let span = document.createElement("span");
-    structElement.style.position = "relative";
     span.style.color = "red";
     span.style.display = "inline-block";
     span.style.position = "absolute";
@@ -172,6 +185,12 @@ class SVGGenerator {
       let t = this.addText(group, structElement, "condition");
       this.center(structElement, t);
       this.addWhiteShadow(t);
+    } else if (structElement instanceof StructIteration) {
+      let t = this.addText(group, structElement, "condition", true);
+    } else if (structElement instanceof StructLoop) {
+      let t = this.addText(group, structElement, "condition");
+      t.setAttribute("y", structElement.scrollHeight
+              - this.lineHeight + this.textHeight);
     }
 
     if (structElement instanceof StructContainer
