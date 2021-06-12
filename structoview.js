@@ -6,7 +6,7 @@ class StructElement extends HTMLElement {
 class StructBlock extends StructElement {
 }
 class StructContainer extends StructElement {
-  set condition(condition){this.setAttribute('condition',condition);}
+  set condition(condition){this.setAttribute('condition', condition);}
   get condition(){return this.getAttribute('condition');}
   setBlock(index, block){
     if(this.children.length<index)
@@ -108,15 +108,15 @@ class StructDiagram extends StructElement {
       }
     }
     function checkEmptyBlock(block){
-      if(block.children.length==0){
+      if(block.children.length===0){
         block.appendChild(new StructSequence());//.textContent=' ';
       }
     }
-
-    for(var i=0;i<lines.length;i++){
+    
+    for(var i=0;i<lines.length;i++){      
       try{
         var trimmed = lines[i].trim();
-        if(trimmed.length==0)
+        if(trimmed.length===0)
           continue;
         lastlineindex = i;
         if(trimmed.startsWith('CAPTION:')){

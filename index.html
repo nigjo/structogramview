@@ -7,6 +7,7 @@
 <script src="structoview.js"></script>
 <link rel="stylesheet" href="structoedit.css">
 <script src="structoedit.js"></script>
+<script src="structosvg.js"></script>
 <script>
 function loadSample(){
   loadSourceTo('sample1.sc', 'sample1');
@@ -24,6 +25,7 @@ function loadSourceTo(filename, sourceid){
 }
 window.addEventListener('DOMContentLoaded', loadSample);
 </script>
+<style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>
 </head>
 <body>
 <div style="display:inline-block;margin:0">
@@ -37,8 +39,22 @@ window.addEventListener('DOMContentLoaded', loadSample);
 </figure>
 <figure id="diagram">
 <label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
-<div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview"></div>
+<div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="imageview"></div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
+</figure>
+<figure id="imageview">
+<svg xmlns="http://www.w3.org/2000/svg">
+<style>
+svg{stroke:none;stroke-width:1px;fill:white;}
+line{stroke:black;}
+text{font-family:sans-serif;fill:black;}
+.whiteShadow{fill:none !important;stroke:white;stroke-width:2px;}
+.casevalue,.blocktitle{fill:gray;font-size:75%;font-style:italic;}
+.caption{font-weight:bold;font-size:1.25em;}
+</style>
+</svg>
+<div><a href="diagram.svg" onclick="downloadSvg(event);return false;">📥</a>
+<figuredesc>SVG Grafik</figuredesc>
 </figure>
 <figure id="structure">
 <div class="structtree" id="xmlview"></div>
@@ -48,7 +64,7 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <div id="githublink" style="position:absolute;top:0;right:0">
 </div>
 <script>
-var offline='<a href="https://github.com/nigjo/structogramview/">Fork me on GitHub</a>';
+var offline='<a class="badge" href="https://github.com/nigjo/structogramview/">Fork me on GitHub</a>';
 var online='<a href="https://github.com/nigjo/structogramview/"> \
 <img width="149" height="149" \
   src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" \

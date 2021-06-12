@@ -9,7 +9,7 @@ function generateDiagram(viewer){
   while(viewer.children.length>0)
     viewer.removeChild(viewer.firstChild);
   viewer.appendChild(diagram);
-  return diagram;
+  return viewer.firstElementChild;
 }
 function generateStructureView(diagram, xmlviewid){
 //data-structcode-xml
@@ -38,6 +38,8 @@ function updateView(structview){
     erroritem.dataset.parsererror = '';
     var diagram = generateDiagram(structview);
     generateStructureView(diagram, structview.dataset.structcodeXml);
+    let svggen = new SVGGenerator();
+    svggen.generateDownloadImage(diagram, structview);
     var uscompact = document.getElementById('usecompactselect');
     if(uscompact && uscompact.checked){
       diagram.classList.add('compactselect');
@@ -49,6 +51,7 @@ function updateView(structview){
     }
   }
 }
+
 function generateViews(){
   //document.body.style.
   var allViews = document.querySelectorAll('.structview');
