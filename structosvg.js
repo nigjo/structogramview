@@ -56,13 +56,17 @@ class SVGGenerator {
 
   addBorder(group, styleVal, x1, y1, x2, y2) {
     if (styleVal !== '0px') {
-      let br = document.createElementNS(SVGGenerator.SVGNS, "line");
-      br.setAttribute("x1", x1);
-      br.setAttribute("y1", y1);
-      br.setAttribute("x2", x2);
-      br.setAttribute("y2", y2);
-      group.appendChild(br);
+      this.addLine(group, x1, y1, x2, y2);
     }
+  }
+
+  addLine(group, x1, y1, x2, y2) {
+    let br = document.createElementNS(SVGGenerator.SVGNS, "line");
+    br.setAttribute("x1", x1);
+    br.setAttribute("y1", y1);
+    br.setAttribute("x2", x2);
+    br.setAttribute("y2", y2);
+    group.appendChild(br);
   }
 
   addText(container, structElement, attribute = null, before = false) {
@@ -163,20 +167,29 @@ class SVGGenerator {
 
     if (structElement instanceof StructDecision) {
       let tbRect = structElement.thenBlock.getBoundingClientRect();
-      this.addBorder(group, "", 0, 0, tbRect.width, tbRect.top - cRect.top);
-      this.addBorder(group, "", tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
+      this.addLine(group, 0, 0, tbRect.width, tbRect.top - cRect.top);
+      this.addLine(group, tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
       let t = this.addText(group, structElement, "condition");
       this.center(structElement, t);
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructSequence) {
       //let textHeight = cRect.height / 1.5;
       this.addText(group, structElement);
-      //if(structElement instanceof )
+      if (structElement instanceof StructCall) {
+        let delta = this.textHeight / 2 + 1;
+        this.addLine(group, delta, 0, delta, cRect.height);
+        this.addLine(group, cRect.width - delta, 0,
+                cRect.width - delta, cRect.height);
+      } else if (structElement instanceof StructBreak) {
+        let delta = this.textHeight * 1.5 + 1;
+        this.addLine(group, 0, cRect.height / 2, delta, 0);
+        this.addLine(group, 0, cRect.height / 2, delta, cRect.height);
+      }
     } else if (structElement instanceof StructChoose) {
       console.log(structElement.lastChild);
       let ebRect = structElement.lastChild.getBoundingClientRect();
-      this.addBorder(group, "", 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
-      this.addBorder(group, "",
+      this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
+      this.addLine(group,
               ebRect.left - cRect.left, ebRect.top - cRect.top,
               cRect.width, 0);
       let t = this.addText(group, structElement, "condition");
