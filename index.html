@@ -48,7 +48,8 @@ window.addEventListener('DOMContentLoaded', loadSample);
 svg{stroke:none;stroke-width:1px;fill:white;}
 line{stroke:black;}
 text{font-family:sans-serif;fill:black;}
-.whiteShadow{fill:none;stroke:white;stroke-width:2px;}
+.whiteShadow{fill:none !important;stroke:white;stroke-width:2px;}
+.casevalue,.blocktitle{fill:gray;font-size:75%;font-style:italic;}
 </style>
 </svg>
 <div><a href="diagram.svg" onclick="downloadSvg(event);return false;">📥</a>

@@ -104,6 +104,7 @@ class SVGGenerator {
     structElement.style['position'] = "relative";
     let textContent = attribute ? child.value : child.wholeText;
     let cstyle = getComputedStyle(structElement, null);
+    let sstyle = cstyle;
     let sx = parseFloat(cstyle.marginLeft.replace("px", ""))
             + parseFloat(cstyle.paddingLeft.replace("px", ""));
     let sy = parseFloat(cstyle.marginTop.replace("px", ""))
@@ -111,6 +112,7 @@ class SVGGenerator {
     if (attribute) {
       let astyle = getComputedStyle(structElement,
               (before ? ":before" : ":after"));
+      sstyle = astyle;
       if (astyle.position === "absolute") {
         sx = sy = 0;
       }
@@ -129,10 +131,12 @@ class SVGGenerator {
     span.style.position = "absolute";
     span.style.left = sx;
     span.style.top = sy;
+    span.style.fontSize = sstyle.fontSize;
+    span.style.fontWeight = sstyle.fontWeight;
+    span.style.fontStyle = sstyle.fontStyle;
     span.textContent = textContent;
     structElement.append(span);
     let textWidth = span.scrollWidth;
-    let sstyle = getComputedStyle(structElement);
     let baseline = parseFloat(sstyle.fontSize.replace("px", ""));
     //console.log(textContent, cstyle, baseline);
     span.remove();
@@ -156,7 +160,11 @@ class SVGGenerator {
 
   addWhiteShadow(text) {
     text.after(text.cloneNode(true));
-    text.setAttribute("class", "whiteShadow");
+    if (text.hasAttribute("class")) {
+      text.setAttribute("class", text.getAttribute("class") + " whiteShadow");
+    } else {
+      text.setAttribute("class", "whiteShadow");
+    }
   }
 
   addStructure(container, structElement, offsetx, offsety) {
@@ -182,28 +190,55 @@ class SVGGenerator {
     this.addBorder(group, style.borderTopWidth, 0, 0, cRect.width, 0);
     this.addBorder(group, style.borderBottomWidth, 0, cRect.height, cRect.width, cRect.height);
 
-    if (structElement instanceof StructDecision) {
+    if (structElement instanceof StructSequence) {
+      //let textHeight = cRect.height / 1.5;
+      this.addText(group, structElement);
+      if (structElement instanceof StructCall) {
+        group.setAttribute("class", "call");
+        let delta = this.textHeight / 2 + 1;
+        this.addLine(group, delta, 0, delta, cRect.height);
+        this.addLine(group, cRect.width - delta, 0,
+                cRect.width - delta, cRect.height);
+      } else if (structElement instanceof StructBreak) {
+        group.setAttribute("class", "break");
+        let delta = this.textHeight * 1.5 + 1;
+        this.addLine(group, 0, cRect.height / 2, delta, 0);
+        this.addLine(group, 0, cRect.height / 2, delta, cRect.height);
+      } else {
+        group.setAttribute("class", "sequence");
+      }
+    } else if (structElement instanceof StructCaseBlock) {
+      group.setAttribute("class", "case");
+      let t = this.addText(group, structElement, "condition");
+      t.setAttribute("class", "casevalue");
+      this.addWhiteShadow(t);
+    } else if (structElement instanceof StructBlock) {
+      if (structElement.parentElement instanceof StructDecision) {
+        if (structElement === structElement.parentElement.firstElementChild) {
+          group.setAttribute("class", "then");
+          structElement.setAttribute("data-key", "true");
+        } else {
+          group.setAttribute("class", "else");
+          structElement.setAttribute("data-key", "false");
+        }
+        let t = this.addText(group, structElement, "data-key");
+        t.setAttribute("class", "blocktitle");
+        structElement.removeAttribute("data-key");
+      } else {
+        group.setAttribute("class", "block");
+      }
+      console.log(structElement);
+      //this.addText(group, structElement, "");
+    } else if (structElement instanceof StructDecision) {
+      group.setAttribute("class", "if");
       let tbRect = structElement.thenBlock.getBoundingClientRect();
       this.addLine(group, 0, 0, tbRect.width, tbRect.top - cRect.top);
       this.addLine(group, tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
       let t = this.addText(group, structElement, "condition");
       this.center(structElement, t);
       this.addWhiteShadow(t);
-    } else if (structElement instanceof StructSequence) {
-      //let textHeight = cRect.height / 1.5;
-      this.addText(group, structElement);
-      if (structElement instanceof StructCall) {
-        let delta = this.textHeight / 2 + 1;
-        this.addLine(group, delta, 0, delta, cRect.height);
-        this.addLine(group, cRect.width - delta, 0,
-                cRect.width - delta, cRect.height);
-      } else if (structElement instanceof StructBreak) {
-        let delta = this.textHeight * 1.5 + 1;
-        this.addLine(group, 0, cRect.height / 2, delta, 0);
-        this.addLine(group, 0, cRect.height / 2, delta, cRect.height);
-      }
     } else if (structElement instanceof StructChoose) {
-      console.log(structElement.lastChild);
+      group.setAttribute("class", "switch");
       let ebRect = structElement.lastChild.getBoundingClientRect();
       this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
       this.addLine(group,
@@ -213,11 +248,17 @@ class SVGGenerator {
       this.center(structElement, t);
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructIteration) {
-      let t = this.addText(group, structElement, "condition", true);
+      group.setAttribute("class", "for");
+      this.addText(group, structElement, "condition", true);
     } else if (structElement instanceof StructLoop) {
+      group.setAttribute("class", "while");
       let t = this.addText(group, structElement, "condition");
       t.setAttribute("y", this.scale(structElement.scrollHeight
               - this.lineHeight + this.textHeight - 1));
+    } else if (structElement instanceof StructDiagram) {
+      group.setAttribute("class", "diagram");
+    } else {
+      group.setAttribute("class", "undefined");
     }
 
     if (structElement instanceof StructContainer
