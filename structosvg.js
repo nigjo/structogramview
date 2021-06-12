@@ -136,9 +136,7 @@ class SVGGenerator {
 
   addWhiteShadow(text) {
     text.after(text.cloneNode(true));
-    text.style.fill = "none";
-    text.style.stroke = "white";
-    text.style.strokeWidth = "2px";
+    text.setAttribute("class", "whiteShadow");
   }
 
   addStructure(container, structElement, offsetx, offsety) {
@@ -148,9 +146,7 @@ class SVGGenerator {
     group.setAttribute("transform",
             "translate(" + (cRect.left - offsetx) + "," + (cRect.top - offsety) + ")");
 
-    if (structElement instanceof StructSequence
-            || structElement instanceof StructContainer
-            || structElement instanceof StructDiagram) {
+    if (structElement instanceof StructDiagram) {
       let rect = document.createElementNS(SVGGenerator.SVGNS, "rect");
       rect.setAttribute("width", cRect.width);
       rect.setAttribute("height", cRect.height);
@@ -175,6 +171,7 @@ class SVGGenerator {
     } else if (structElement instanceof StructSequence) {
       //let textHeight = cRect.height / 1.5;
       this.addText(group, structElement);
+      //if(structElement instanceof )
     } else if (structElement instanceof StructChoose) {
       console.log(structElement.lastChild);
       let ebRect = structElement.lastChild.getBoundingClientRect();
