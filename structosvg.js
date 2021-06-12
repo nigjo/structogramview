@@ -294,6 +294,7 @@ class SVGGenerator {
     svg.setAttribute("viewBox", "0 0 "
             + this.scale(bounding.width) + " "
             + this.scale(bounding.height));
+    svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
 
     let svgstyles = orgstyles.cloneNode(true);
     //the "first child" is the original css text
