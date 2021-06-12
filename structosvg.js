@@ -257,6 +257,10 @@ class SVGGenerator {
               - this.lineHeight + this.textHeight - 1));
     } else if (structElement instanceof StructDiagram) {
       group.setAttribute("class", "diagram");
+      if(structElement.hasAttribute("caption")){
+        let t = this.addText(group, structElement, "caption", true);
+        t.setAttribute("class", "caption");
+      }
     } else {
       group.setAttribute("class", "undefined");
     }
