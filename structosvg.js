@@ -31,7 +31,11 @@ function downloadSvg(event) {
     }
     let sourcecopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:source");
     //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
-    sourcecopy.append(resultDoc.createCDATASection(sourceText));
+    if (sourceText.indexOf("]]>") >= 0) {
+      sourcecopy.append(resultDoc.createTextNode(sourceText));
+    } else {
+      sourcecopy.append(resultDoc.createCDATASection(sourceText));
+    }
     metadata.append(sourcecopy, "\n");
   }
   var serializer = new XMLSerializer();
