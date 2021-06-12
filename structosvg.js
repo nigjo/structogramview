@@ -57,6 +57,16 @@ class SVGGenerator {
   static SVGLOGGER = "svgimage";
   static SVGNS = "http://www.w3.org/2000/svg";
   static SELFNS = "https://nigjo.github.io/structogramview/";
+  /**
+   * Scaling the "text" not the stroke-width.
+   *
+   * @type Number
+   */
+  static SCALE = 1.5;
+
+  scale(val) {
+    return Math.round(val * SVGGenerator.SCALE * 100) / 100;
+  }
 
   addBorder(group, styleVal, x1, y1, x2, y2) {
     if (styleVal !== '0px') {
@@ -66,10 +76,10 @@ class SVGGenerator {
 
   addLine(group, x1, y1, x2, y2) {
     let br = document.createElementNS(SVGGenerator.SVGNS, "line");
-    br.setAttribute("x1", x1);
-    br.setAttribute("y1", y1);
-    br.setAttribute("x2", x2);
-    br.setAttribute("y2", y2);
+    br.setAttribute("x1", this.scale(x1));
+    br.setAttribute("y1", this.scale(y1));
+    br.setAttribute("x2", this.scale(x2));
+    br.setAttribute("y2", this.scale(y2));
     group.appendChild(br);
   }
 
@@ -91,7 +101,7 @@ class SVGGenerator {
     } else {
       return undefined;
     }
-    structElement.style.position = "relative";
+    structElement.style['position'] = "relative";
     let textContent = attribute ? child.value : child.wholeText;
     let cstyle = getComputedStyle(structElement, null);
     let sx = parseFloat(cstyle.marginLeft.replace("px", ""))
@@ -128,9 +138,9 @@ class SVGGenerator {
     span.remove();
 
     let text = document.createElementNS(SVGGenerator.SVGNS, "text");
-    text.setAttribute("x", sx);
-    text.setAttribute("y", sy + baseline + 2);
-    text.setAttribute("textLength", textWidth);
+    text.setAttribute("x", this.scale(sx));
+    text.setAttribute("y", this.scale(sy + baseline + 2));
+    text.setAttribute("textLength", this.scale(textWidth));
     text.append(textContent);
     container.appendChild(text);
 
@@ -140,7 +150,8 @@ class SVGGenerator {
   }
 
   center(parent, text) {
-    text.setAttribute("x", (parent.scrollWidth - text.getAttribute("textLength")) / 2);
+    text.setAttribute("x",
+            (this.scale(parent.scrollWidth) - text.getAttribute("textLength")) / 2);
   }
 
   addWhiteShadow(text) {
@@ -152,13 +163,14 @@ class SVGGenerator {
     let group = document.createElementNS(SVGGenerator.SVGNS, "g");
     group.setAttribute("class", structElement.nodeName.toLowerCase());
     let cRect = structElement.getBoundingClientRect();
-    group.setAttribute("transform",
-            "translate(" + (cRect.left - offsetx) + "," + (cRect.top - offsety) + ")");
+    group.setAttribute("transform", "translate("
+            + this.scale(cRect.left - offsetx) + ","
+            + this.scale(cRect.top - offsety) + ")");
 
     if (structElement instanceof StructDiagram) {
       let rect = document.createElementNS(SVGGenerator.SVGNS, "rect");
-      rect.setAttribute("width", cRect.width);
-      rect.setAttribute("height", cRect.height);
+      rect.setAttribute("width", this.scale(cRect.width));
+      rect.setAttribute("height", this.scale(cRect.height));
       group.appendChild(rect);
       //console.log(SVGGenerator.SVGLOGGER, structElement);
     }
@@ -204,8 +216,8 @@ class SVGGenerator {
       let t = this.addText(group, structElement, "condition", true);
     } else if (structElement instanceof StructLoop) {
       let t = this.addText(group, structElement, "condition");
-      t.setAttribute("y", structElement.scrollHeight
-              - this.lineHeight + this.textHeight);
+      t.setAttribute("y", this.scale(structElement.scrollHeight
+              - this.lineHeight + this.textHeight - 1));
     }
 
     if (structElement instanceof StructContainer
@@ -236,13 +248,16 @@ class SVGGenerator {
 
     //<svg xmlns="http://www.w3.org/2000/svg"></svg>
     let svg = orgsvg.cloneNode();
-    svg.setAttribute("width", bounding.width);
-    svg.setAttribute("height", bounding.height);
+    svg.setAttribute("width", Math.round(bounding.width * 100) / 100);
+    svg.setAttribute("height", Math.round(bounding.height * 100) / 100);
+    svg.setAttribute("viewBox", "0 0 "
+            + this.scale(bounding.width) + " "
+            + this.scale(bounding.height));
 
     let svgstyles = orgstyles.cloneNode(true);
     //the "first child" is the original css text
     svgstyles.textContent = svgstyles.firstChild.textContent;
-    svgstyles.append("svg{font-size:" + this.textHeight + "px}");
+    svgstyles.append("svg{font-size:" + this.scale(this.textHeight) + "px}");
     svg.appendChild(svgstyles);
 
     //console.log(SVGGenerator.SVGLOGGER,bounding,
