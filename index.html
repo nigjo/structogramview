@@ -40,14 +40,14 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <figure id="diagram">
 <label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
 <div class="structview" id="diagramView"
-     data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="imageview"></div>
+     data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
 <div>
   <span><a href="diagram.svg" onclick="downloadSvg(event, 'diagramView');return false;">📥</a></span>
 </div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
-<figure id="imageview">
-<svg xmlns="http://www.w3.org/2000/svg">
+<figure id="imageview"><!-- this may be set to display:none -->
+<svg id="svgdiagram" xmlns="http://www.w3.org/2000/svg">
 <style>
 svg{stroke:none;stroke-width:1px;fill:white;}
 line{stroke:black;}
