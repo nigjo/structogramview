@@ -44,5 +44,5 @@ figuredesc[data-parsererror]:before{
   display:block;
 }
 #imageview{
-  background-color:lightblue;
+  display:none;
 }

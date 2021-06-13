@@ -39,7 +39,11 @@ window.addEventListener('DOMContentLoaded', loadSample);
 </figure>
 <figure id="diagram">
 <label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
-<div class="structview" data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="imageview"></div>
+<div class="structview" id="diagramView"
+     data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="imageview"></div>
+<div>
+  <span><a href="diagram.svg" onclick="downloadSvg(event, 'diagramView');return false;">📥</a></span>
+</div>
 <figuredesc>Nassi–Shneiderman diagram</figuredesc>
 </figure>
 <figure id="imageview">
@@ -53,7 +57,6 @@ text{font-family:sans-serif;fill:black;}
 .caption{font-weight:bold;font-size:1.25em;}
 </style>
 </svg>
-<div><a href="diagram.svg" onclick="downloadSvg(event);return false;">📥</a>
 <figuredesc>SVG Grafik</figuredesc>
 </figure>
 <figure id="structure">
