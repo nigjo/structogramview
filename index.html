@@ -42,7 +42,19 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <div class="structview" id="diagramView"
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
 <div>
-  <span><a href="diagram.svg" onclick="downloadSvg(event, 'diagramView');return false;">📥</a></span>
+  <script>
+    const downloadSvgWithOptionsContext = document.currentScript.parentNode;
+    function downloadSvgWithOptions(event) {
+      let withSources = downloadSvgWithOptionsContext
+              .querySelector("input[name='withSources']").checked;
+      let withStructure = downloadSvgWithOptionsContext
+              .querySelector("input[name='withStructure']").checked;
+      downloadSvg(event, 'diagramView', withSources, withStructure);
+    }
+  </script>
+  <span><a href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥</a></span>
+  <span><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></span>
+  <span><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></span>
 </div>
 <figcaption>Nassi–Shneiderman diagram</figcaption>
 </figure>
