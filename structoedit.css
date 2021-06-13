@@ -15,7 +15,7 @@ figure{
   padding-bottom: 0;
   border:1px dotted gray;
 }
-figuredesc{
+figcaption{
   border-top:1px dotted gray;
   width:100%;
   display: block;
@@ -44,5 +44,5 @@ figuredesc[data-parsererror]:before{
   display:block;
 }
 #imageview{
-  background-color:lightblue;
+  display:none;
 }

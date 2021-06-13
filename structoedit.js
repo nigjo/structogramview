@@ -12,10 +12,14 @@ function generateDiagram(viewer){
   return viewer.firstElementChild;
 }
 function generateStructureView(diagram, xmlviewid){
-//data-structcode-xml
-  var xmllines = diagram.outerHTML
-      .replace(/>(?=<)/g, '>\n')
-      .split('\n');
+  let xdoc = document.implementation.createDocument(
+          "https://nigjo.github.io/structogramview/", "", null);
+  let copy = diagram.cloneNode(true);
+  xdoc.appendChild(copy);
+  var xmllines = new XMLSerializer().serializeToString(xdoc)
+          .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
+          .replace(/>(?=<)/g, '>\n')
+          .split('\n');
   var indended = '';
   var indent = '';
   for(var l in xmllines){
