@@ -10,7 +10,14 @@
 <script src="structosvg.js"></script>
 <script>
 function loadSample(){
-  loadSourceTo('sample1.sc', 'sample1');
+  try{
+    loadSourceTo('sample1.sc', 'sample1');
+  }catch(e){
+    console.warn(e);
+    var view=document.querySelector(
+            ".structview[data-structcode-id='sample1']");
+    updateView(view);
+  }
 }
 function loadSourceTo(filename, sourceid){
   var client = new XMLHttpRequest();
