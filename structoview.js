@@ -27,6 +27,21 @@ class StructContainer extends StructElement {
 }
 class StructSequence extends StructElement {
 }
+class StructComment extends StructSequence {
+  isMultiline() {
+    return this.textContent.indexOf("\n") > 0;
+  }
+  get lines() {
+    return this.textContent.split("\n");
+  }
+  addComment(line) {
+    if (this.textContent.length !== 0) {
+      this.textContent += "\n" + line;
+    } else {
+      this.textContent = line;
+    }
+  }
+}
 class StructDecision extends StructContainer {
   getName(){
     return "IF";
@@ -119,7 +134,15 @@ class StructDiagram extends StructElement {
         if(trimmed.length===0)
           continue;
         lastlineindex = i;
-        if(trimmed.startsWith('CAPTION:')){
+        if (trimmed.startsWith('#')) {
+          let comment = trimmed.substr(1).trim();
+          if (comment.length > 0) {
+            if (!(stack[0].lastElementChild instanceof StructComment)) {
+              stack[0].appendChild(new StructComment());
+            }
+            stack[0].lastElementChild.addComment(comment);
+          }
+        }else if(trimmed.startsWith('CAPTION:')){
           stack[0].caption = trimmed.substr(8).trim();
         }else if(trimmed.startsWith('IF:')){
           var item = new StructDecision();
@@ -222,6 +245,7 @@ class StructDiagram extends StructElement {
 }
 customElements.define('struct-diagram',StructDiagram);
 customElements.define('struct-sequence',StructSequence);
+customElements.define('struct-comment',StructComment);
 customElements.define('struct-block',StructBlock);
 customElements.define('struct-decision',StructDecision);
 customElements.define('struct-select',StructChoose);

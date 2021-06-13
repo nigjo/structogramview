@@ -1,7 +1,7 @@
 /* global URL, DOMParser, Attr, Text */
 /* global StructSequence, StructContainer, StructDiagram, StructDecision, 
  StructChoose, StructBlock, StructCall, StructBreak, StructCaseBlock,
- StructLoop, StructIteration */
+ StructLoop, StructIteration, StructComment */
 
 class SVGManger {
   /**
@@ -187,6 +187,20 @@ class SVGGenerator {
     group.appendChild(br);
   }
 
+  createTextReference(referenceStyle, x, y, textContent) {
+    let span = document.createElement("span");
+    span.style.color = "red";
+    span.style.display = "inline-block";
+    span.style.position = "absolute";
+    span.style.left = x;
+    span.style.top = y;
+    span.style.fontSize = referenceStyle.fontSize;
+    span.style.fontWeight = referenceStyle.fontWeight;
+    span.style.fontStyle = referenceStyle.fontStyle;
+    span.textContent = textContent;
+    return span;
+  }
+
   addText(container, structElement, attribute = null, before = false) {
     let dx = 0;
     //*for (let i = 0; i < structElement.childNodes.length; i++)*/ {
@@ -229,16 +243,7 @@ class SVGGenerator {
     }
     structElement.removeAttribute("style");
 
-    let span = document.createElement("span");
-    span.style.color = "red";
-    span.style.display = "inline-block";
-    span.style.position = "absolute";
-    span.style.left = sx;
-    span.style.top = sy;
-    span.style.fontSize = sstyle.fontSize;
-    span.style.fontWeight = sstyle.fontWeight;
-    span.style.fontStyle = sstyle.fontStyle;
-    span.textContent = textContent;
+    let span = this.createTextReference(sstyle, sx, sy, textContent);
     structElement.append(span);
     let textWidth = span.scrollWidth;
     let baseline = parseFloat(sstyle.fontSize.replace("px", ""));
@@ -294,7 +299,34 @@ class SVGGenerator {
     this.addBorder(group, style.borderTopWidth, 0, 0, cRect.width, 0);
     this.addBorder(group, style.borderBottomWidth, 0, cRect.height, cRect.width, cRect.height);
 
-    if (structElement instanceof StructSequence) {
+    if (structElement instanceof StructComment) {
+      group.setAttribute("class", "comment");
+      if (structElement.isMultiline()) {
+        let fulltext = this.addText(group, structElement);
+        let lines = structElement.lines;
+        let multiline = fulltext.cloneNode();
+        let textLength = 0;
+        for (var line of lines) {
+          let tspan = document.createElementNS(SVGGenerator.SVGNS, "tspan");
+          if (multiline.children.length > 0) {
+            tspan.setAttribute("x", multiline.getAttribute("x"));
+            tspan.setAttribute("dy", this.scale(this.lineHeight) + "px");
+          }
+          let lineref = this.createTextReference(style, 0, 0, line);
+          structElement.append(lineref);
+          let spanLength = lineref.scrollWidth;
+          lineref.remove();
+          tspan.setAttribute("textLength", this.scale(spanLength));
+          tspan.textContent = line;
+          multiline.append(tspan);
+          textLength += spanLength;
+        }
+        multiline.setAttribute("textLength", this.scale(textLength));
+        fulltext.replaceWith(multiline);
+      } else {
+        this.addText(group, structElement);
+      }
+    } else if (structElement instanceof StructSequence) {
       //let textHeight = cRect.height / 1.5;
       this.addText(group, structElement);
       if (structElement instanceof StructCall) {
