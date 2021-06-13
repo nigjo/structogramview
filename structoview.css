@@ -11,7 +11,7 @@ struct-diagram:before{
   line-height: 1.5em;
   padding-left: .25em;
 }
-struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break{
+struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   display:block;
   box-sizing: border-box;
 }
@@ -19,7 +19,7 @@ struct-decision>struct-block,struct-select>struct-case,struct-select>struct-bloc
   display: table-cell;
   background-color:lightgray;
 }
-struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break{
+struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   padding:.25em;
   background-color:white;
   border-top:1px solid black;
@@ -92,6 +92,11 @@ struct-loop:after{
   position:relative;
   bottom:-.25em;
   left:-1em;
+}
+struct-comment{
+  white-space: pre-line;
+  font-style:italic;
+  color:gray;
 }
 struct-diagram{
   font-family:sans-serif;

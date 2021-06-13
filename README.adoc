@@ -13,8 +13,8 @@ and the tree view will be updated directly.
  * Every *Command* has to be at the start of a line and
  * A Command must be upper-case.
  * Indentation is ignored.
-
-_TODO: Treat sequences of "comment lines" as a single "sequence element"._
+ * "Comments" are prefixed by a hash symbol (#)
+ * Multiple Comments are merged to a single Element.
 
 == Commands
 

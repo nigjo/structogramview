@@ -17,9 +17,12 @@ FOR: from 1 to 10
     print index
   ENDSELECT:
 ENDFOR:
+#facy things are sometimes really strange
 CALL: do something fancy to sum
 print current sum
 LOOP: 
+  #loops are cool
+  #      and newlines too
   IF: current sum is odd
     add 1 to sum
   ENDIF:
