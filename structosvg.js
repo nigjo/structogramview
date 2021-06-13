@@ -1,46 +1,42 @@
-/* global StructSequence, URL, StructContainer, StructDiagram, StructDecision, StructChoose, StructBlock */
+/* global URL, DOMParser, Attr, Text */
+/* global StructSequence, StructContainer, StructDiagram, StructDecision, 
+ StructChoose, StructBlock, StructCall, StructBreak, StructCaseBlock,
+ StructLoop, StructIteration */
 
-function downloadSvg(event) {
+class SVGManger {
+  /**
+   * @param {Element} viewer the element must have an attribute
+   *    "data-stuctcode-svg" with the ID of a div with a svg-Element.
+   * @returns {Element} an &lt;svg&gt; Element
+   */
+  static getSvgImage(viewer) {
+    let imageViewId;
+    try {
+      imageViewId = viewer.dataset.structcodeSvg;
+      let svg = document.getElementById(imageViewId);
+      if (!svg.isDefaultNamespace(SVGGenerator.SVGNS)) {
+        //fallback if id is for parent of svg
+        svg = svg.querySelector("svg");
+        if (!svg || !svg.isDefaultNamespace(SVGGenerator.SVGNS)) {
+          throw "unable to find svg for id '" + imageViewId + "'";
+        }
+      }
+      return svg;
+    } catch (e) {
+      console.error(SVGGenerator.SVGLOGGER, e);
+      alert("unable to find svg template '" + imageViewId + "'. See console for details.");
+      return undefined;
+    }
+  }
+}
+
+function downloadSvg(event, viewerId, withSources = true, withSourceTree = false) {
   event.preventDefault();
   let dlLink = document.createElement("a");
   dlLink.style.display = "none";
-  let svg = document.querySelector("#imageview svg");
-  //svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  let resultDoc = document.implementation.createDocument(
-          SVGGenerator.SVGNS, "svg");
-  [...svg.attributes].forEach(attr => {
-    resultDoc.firstChild.setAttribute(attr.nodeName, attr.nodeValue);
-  });
-  for (let child of svg.children) {
-    resultDoc.firstChild.append(child.cloneNode(true));
-  }
-  if (svg.dataset.structcodeId) {
-    var codeid = svg.dataset.structcodeId;
-    var sourcecode = document.querySelector('#' + codeid);
-    var sourceText;
-    if (sourcecode.value)
-      sourceText = sourcecode.value;
-    else
-      sourceText = sourcecode.textContent;
-    let metadata = resultDoc.querySelector("metadata");
-    if (!metadata) {
-      metadata = resultDoc.createElementNS(SVGGenerator.SVGNS, "metadata");
-      metadata.append("\n");
-      resultDoc.firstChild.insertBefore(metadata, resultDoc.firstChild.firstChild);
-    }
-    let sourcecopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:source");
-    //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
-    if (sourceText.indexOf("]]>") >= 0) {
-      sourcecopy.append(resultDoc.createTextNode(sourceText));
-    } else {
-      sourcecopy.append(resultDoc.createCDATASection(sourceText));
-    }
-    metadata.append(sourcecopy, "\n");
-  }
-  var serializer = new XMLSerializer();
-  var xmlString = serializer.serializeToString(resultDoc);
-  var file = new Blob([xmlString], {type: "application/svg"});
-  var data = URL.createObjectURL(file);
+  let viewer = getViewer(viewerId);
+  let svg = SVGManger.getSvgImage(viewer);
+  let data = getDownloadData(svg, viewer, withSources, withSourceTree);
   dlLink.href = data;
   dlLink.download = "diagram.svg";
   dlLink.click();
@@ -50,6 +46,115 @@ function downloadSvg(event) {
     window.URL.revokeObjectURL(data);
   }, 0);
   return false;
+
+  /**
+   * @param {String} viewerId
+   */
+  function getViewer(viewerId) {
+    try {
+      console.log(viewerId);
+      let viewer = document.getElementById(viewerId);
+      if (!(viewer.firstElementChild instanceof StructDiagram)) {
+        throw "viewer does not contain a diagram";
+      }
+      return viewer;
+    } catch (e) {
+      console.error(SVGGenerator.SVGLOGGER, e);
+      alert("no diagram '" + viewerId + "' found.");
+      return undefined;
+    }
+  }
+
+  /**
+   * 
+   * @param {Element} svg
+   * @param {Element} viewer
+   * @param {Boolean} withSources
+   * @param {Boolean} withSourceTree
+   * @returns {DOMString}
+   */
+  function getDownloadData(svg, viewer, withSources, withSourceTree = false) {
+    //create copy of svg element
+    let resultDoc = document.implementation.createDocument(
+            SVGGenerator.SVGNS, "svg");
+    [...svg.attributes].forEach(attr => {
+      resultDoc.firstChild.setAttribute(attr.nodeName, attr.nodeValue);
+    });
+    resultDoc.firstChild.removeAttribute("id");
+    for (let child of svg.children) {
+      resultDoc.firstChild.append(child.cloneNode(true));
+    }
+
+    if (withSources) {
+      addSources(resultDoc, viewer);
+    }
+    if (withSourceTree) {
+      addSourceTree(resultDoc, viewer);
+    }
+
+    var serializer = new XMLSerializer();
+    var xmlString = serializer.serializeToString(resultDoc);
+    var file = new Blob([xmlString.replace(/>(?=<)/g, '>\n')], {type: "application/svg"});
+    return URL.createObjectURL(file);
+  }
+
+  function getMetadata(resultDoc) {
+    let metadata = resultDoc.querySelector("metadata");
+    if (!metadata) {
+      metadata = resultDoc.createElementNS(SVGGenerator.SVGNS, "metadata");
+      metadata.append("\n");
+      resultDoc.firstChild.insertBefore(metadata, resultDoc.firstChild.firstChild);
+    }
+    return metadata;
+  }
+
+  /**
+   * @param {Element} resultDoc
+   * @param {Element} viewer
+   */
+  function addSources(resultDoc, viewer) {
+    if (viewer.dataset.structcodeId) {
+      var sourcecode = document.getElementById(viewer.dataset.structcodeId);
+      var sourceText;
+      if (sourcecode.value)
+        sourceText = sourcecode.value;
+      else
+        sourceText = sourcecode.textContent;
+      let sourcecopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:source");
+      //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
+      if (sourceText.indexOf("]]>") >= 0) {
+        sourcecopy.append(resultDoc.createTextNode(sourceText));
+      } else {
+        sourcecopy.append(resultDoc.createCDATASection(sourceText));
+      }
+      let metadata = getMetadata(resultDoc);
+      metadata.append(sourcecopy, "\n");
+    }
+  }
+
+  /**
+   * @param {Element} resultDoc
+   * @param {Element} viewer
+   */
+  function addSourceTree(resultDoc, viewer) {
+    if (viewer.dataset.structcodeXml) {
+      var sourcecode = document.getElementById(viewer.dataset.structcodeXml);
+      let astCopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:ast");
+      let outcontent = sourcecode.textContent
+              .replace(/>/, " xmlns:structo=\"https://nigjo.github.io/structogramview/\">")
+              .replace(/<(\/)?/g, "<$1structo:");
+      //console.log("textContent", outcontent);
+      const parser = new DOMParser();
+      let xmldata = parser.parseFromString(outcontent, 'application/xml');
+      //console.log("xmldata", xmldata);
+      let outData = xmldata.firstElementChild.cloneNode(true);
+      outData.removeAttribute("xmlns:structo");
+      astCopy.append(outData);
+      let metadata = getMetadata(resultDoc);
+      metadata.append(astCopy, "\n");
+    }
+}
+
 }
 
 class SVGGenerator {
@@ -281,10 +386,7 @@ class SVGGenerator {
   generateDownloadImage(diagram, viewer) {
     let bounding = diagram.getBoundingClientRect();
 
-    let svgImageId = viewer.dataset.structcodeSvg;
-
-    let org = document.getElementById(svgImageId);
-    let orgsvg = org.querySelector("svg");
+    let orgsvg = SVGManger.getSvgImage(viewer);
     let orgstyles = orgsvg.querySelector("style");
 
     let dstyles = getComputedStyle(diagram, null);
@@ -309,7 +411,7 @@ class SVGGenerator {
     //console.log(SVGGenerator.SVGLOGGER,bounding,
     //    diagram.offsetLeft,diagram.offsetTop);
     this.addStructure(svg, diagram, bounding.left, bounding.top);
-    svg.dataset.structcodeId = viewer.dataset.structcodeId;
+    //svg.dataset.structcodeId = viewer.dataset.structcodeId;
     orgsvg.replaceWith(svg);
   }
 
