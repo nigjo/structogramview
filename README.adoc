@@ -44,7 +44,14 @@ Every *Command* has to be at the start of a line and upper-case. Indentation is 
 
 Every line not starting with a _Command_ is treated as a simple _sequence_.
 
-## taking screenshots
+== Export to SVG
 
-currently there is no direct support to save the generated diagram. You have to use
-your browsers oder OS' functions to take screenshots.
+Under the diagram is a small 📥 Icon which will allow you to download the diagram as SVG
+Image. The SVG Image should be close (99%) to what the browser will show to you.
+
+Next to the download Icon are some options to store the source code and the
+"Source Structure Tree" together with the SVG. These data is stored as "metadata"
+inside the SVG file.
+
+Beside of that you may use your browsers or OS' functions to take screenshots.
+
