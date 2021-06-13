@@ -35,7 +35,7 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <figure id="source">
 <textarea id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
 </textarea>
-<figuredesc>Sourcecode</figuredesc>
+<figcaption>Sourcecode</figcaption>
 </figure>
 <figure id="diagram">
 <label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <div>
   <span><a href="diagram.svg" onclick="downloadSvg(event, 'diagramView');return false;">📥</a></span>
 </div>
-<figuredesc>Nassi–Shneiderman diagram</figuredesc>
+<figcaption>Nassi–Shneiderman diagram</figcaption>
 </figure>
 <figure id="imageview"><!-- this may be set to display:none -->
 <svg id="svgdiagram" xmlns="http://www.w3.org/2000/svg">
@@ -57,11 +57,11 @@ text{font-family:sans-serif;fill:black;}
 .caption{font-weight:bold;font-size:1.25em;}
 </style>
 </svg>
-<figuredesc>SVG Grafik</figuredesc>
+<figcaption>SVG Grafik</figcaption>
 </figure>
 <figure id="structure">
 <div class="structtree" id="xmlview"></div>
-<figuredesc>Structured view</figuredesc>
+<figcaption>Structured view</figcaption>
 </figure>
 </div>
 <div id="githublink" style="position:absolute;top:0;right:0">
