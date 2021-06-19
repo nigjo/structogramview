@@ -1,5 +1,5 @@
 .structcode{
-  min-width:30em;
+  min-width:35em;
   min-height:30em;
   resize:vertical;
 }
@@ -38,7 +38,7 @@ struct-diagram{
   /*--decision-then:'ja';*/
   /*--decision-else:'nein';*/
 }
-figuredesc[data-parsererror]:before{
+figcaption[data-parsererror]:before{
   color:red;
   content:attr(data-parsererror);
   display:block;
