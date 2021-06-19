@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+Copyright 2021 Jens Hofschröer.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+  <head>
+    <title>Isaac & Ben</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="editor.css">
+    <link rel="stylesheet" href="structoview.css">
+    <link rel="stylesheet" href="styles/stackoverflow-light.min.css">
+    <!--<script src="structoview.js" type="module"></script>-->
+    <!--<script src="highlight.js" type="module"></script>-->
+    <script src="structoeditor.js" type="module"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Isaac & Ben</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="">New</a></li>
+        <li><a href="#">Load</a></li>
+        <li><a href="#">Save</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a target="github" href="https://github.com/nigjo/structogramview/issues">Contribute</a></li>
+        <li><a target="github" href="https://github.com/nigjo/structogramview#readme">Help</a></li>
+      </ul>
+    </nav>
+    <main>
+      <div class="panel editorcontainer">
+        <div id="editor" contenteditable="true">Dies ist ein Test
+IF: alles gut?
+Zeige Grafik
+ENDIF:
+RETURN: vorbei</div>
+      </div>
+      <div class="panel" id="display"></div>
+      <div id="errormessage"></div>
+    </main>
+    <footer>&copy; Jens Hofschröer 2021 -
+      <a target="github" href="https://github.com/nigjo/structogramview/">Github Sources</a>
+    </footer>
+  </body>
+</html>
