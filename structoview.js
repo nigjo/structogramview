@@ -53,11 +53,11 @@ class StructDecision extends StructContainer {
     return this.getBlock(0);
   }
   set elseBlock(block){
-    this.thenBlock;
+    this.getBlock(0);//ensure block 0
     this.setBlock(1, block);
   }
   get elseBlock(){
-    this.thenBlock;
+    this.getBlock(0);//ensure block 0
     return this.getBlock(1);
   }
 }
