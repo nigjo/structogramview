@@ -35,10 +35,38 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>
 </head>
 <body>
+<input type="radio" name="viewOption" checked id="showHTML">
+<input type="radio" name="viewOption" id="showXML">
+<input type="radio" name="viewOption" id="showSVG">
+<header>
+<h1>Structogram Editor</h1>
+</header>
+<nav>
+  <ul title="View Options">
+    <li><label class="menuitem" for="showHTML">HTML</label></li>
+    <li><label class="menuitem" for="showSVG">SVG</label></li>
+    <li><label class="menuitem" for="showXML">XML</label></li>
+  </ul>
+  <ul title="Actions">
+    <li>
+  <script>
+    const downloadSvgWithOptionsContext = document.currentScript.parentNode;
+    function downloadSvgWithOptions(event) {
+      let withSources = downloadSvgWithOptionsContext
+              .querySelector("input[name='withSources']").checked;
+      let withStructure = downloadSvgWithOptionsContext
+              .querySelector("input[name='withStructure']").checked;
+      downloadSvg(event, 'diagramView', withSources, withStructure);
+    }
+  </script>
+  <a class="menuitem" href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
+  <span><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></span>
+  <span><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></span>
+    </li>
+  </ul>
+</nav>
+<main>
 <div style="display:inline-block;margin:0">
-<div id="header">
-<h1>Structogram Viewer</h1>
-</div>
 <figure id="source">
 <textarea id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
 IF: external sources exist?
@@ -62,21 +90,6 @@ export as SVG
 <label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
 <div class="structview" id="diagramView"
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
-<div>
-  <script>
-    const downloadSvgWithOptionsContext = document.currentScript.parentNode;
-    function downloadSvgWithOptions(event) {
-      let withSources = downloadSvgWithOptionsContext
-              .querySelector("input[name='withSources']").checked;
-      let withStructure = downloadSvgWithOptionsContext
-              .querySelector("input[name='withStructure']").checked;
-      downloadSvg(event, 'diagramView', withSources, withStructure);
-    }
-  </script>
-  <span><a href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥</a></span>
-  <span><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></span>
-  <span><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></span>
-</div>
 <figcaption>Nassi–Shneiderman diagram</figcaption>
 </figure>
 <figure id="imageview"><!-- this may be set to display:none -->
@@ -91,13 +104,15 @@ text{font-family:sans-serif;fill:black;}
 .caption{font-weight:bold;font-size:1.25em;}
 </style>
 </svg>
-<figcaption>SVG Grafik</figcaption>
+<figcaption>SVG View</figcaption>
 </figure>
 <figure id="structure">
 <div class="structtree" id="xmlview"></div>
 <figcaption>Structured view</figcaption>
 </figure>
 </div>
+</main>
+<footer>
 <div id="githublink" style="position:absolute;top:0;right:0">
 </div>
 <script>
@@ -113,5 +128,6 @@ if(window.location.protocol==='file:'){
   document.getElementById('githublink').innerHTML = online;
 }
 </script>
+</footer>
 </body>
 </html>

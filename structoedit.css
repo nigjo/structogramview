@@ -1,34 +1,35 @@
 .structcode{
-  min-width:35em;
+  width:35em;
   min-height:30em;
   resize:vertical;
+  max-width: 85vw;
 }
 .structcodecmd{
   color:blue;
   font-weight:bold;
 }
 figure{
+  position:relative;
   display: inline-block;
   vertical-align: top;
-  margin: 0 1em 1em 1em;
+  margin: 2em .5em 1em .5em;
   padding:.25em;
   padding-bottom: 0;
   border:1px dotted gray;
 }
 figcaption{
-  border-top:1px dotted gray;
-  width:100%;
+  border: 1px dotted gray;
+  width: calc(100% + 2px);
   display: block;
-  margin-top: .5em;
+  /* margin-top: .5em; */
   background-color: lightgray;
   padding: .25em;
   font-family: sans-serif;
-  position: relative;
-  left: -.25em;
-}
-#header{
-  display:block;
-  margin: .5em;
+  position: absolute;
+  left: -1px;
+  top: -1.5em;
+  box-sizing: border-box;
+  line-height: 1em;
 }
 #xmlview{
   white-space:pre-wrap;
@@ -43,6 +44,60 @@ figcaption[data-parsererror]:before{
   content:attr(data-parsererror);
   display:block;
 }
-#imageview{
+#imageview,#structure{
   display:none;
+}
+#diagram{
+  position:absolute;
+  top:0;
+  left:0;
+  visibility:hidden;
+}
+nav{display:inline-block;margin-top:1em;}
+nav a{text-decoration:none;}
+nav ul{position:relative;display:inline-flex;margin: 0;padding-left: 0;padding-right: .5em;border-top: 1px solid black;}
+nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:white;padding:0 .1em }
+nav li{list-style:none;margin: .25em;}
+nav .menuitem{color:green;background-color:lightblue;}
+nav .menuitem{cursor:pointer;display:block;padding:.5em;margin:.25em;box-sizing:border-box;white-space:pre;line-height: 1em;}
+nav label.menuitem{color:gray;background-color:lightgray;}
+input#showHTML:checked~main #diagram{position:relative;visibility:visible;}
+input#showSVG:checked~main #imageview{display:inline-block;}
+input#showXML:checked~main #structure{display:inline-block;}
+input#showHTML:checked~nav label[for="showHTML"],
+input#showSVG:checked~nav label[for="showSVG"],
+input#showXML:checked~nav label[for="showXML"]
+{color:green;background-color:lightblue;}
+body>input{
+  display:none;
+}
+body{
+  font-family: Segoe UI,sans-serif;
+}
+header {
+  display: inline-block;
+  margin: .5em;
+  border: 1px solid black;
+  padding-left: 1em;
+  padding-top: 1em;
+}
+header h1{
+  border-left: 1px solid black;
+  padding: 0.1em .25em;
+  margin: 0;
+  border-top: 1px solid black;
+}
+figcaption {
+  border: 1px dotted gray;
+  width: calc(100% + 2px);
+  display: block;
+  /* margin-top: .5em; */
+  background-color: lightgray;
+  padding: .25em;
+  font-family: sans-serif;
+  position: absolute;
+  left: -1px;
+  top: -1.5em;
+  box-sizing: border-box;
+  line-height: 1em;
 }
