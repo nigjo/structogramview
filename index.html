@@ -32,12 +32,12 @@ function loadSourceTo(filename, sourceid){
 }
 window.addEventListener('DOMContentLoaded', loadSample);
 </script>
-<style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>
+<!--<style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>-->
 </head>
 <body>
-<input type="radio" name="viewOption" checked id="showHTML">
-<input type="radio" name="viewOption" id="showXML">
-<input type="radio" name="viewOption" id="showSVG">
+<input type="radio" name="viewOption" tabindex="2" checked id="showHTML">
+<input type="radio" name="viewOption" tabindex="2" id="showSVG">
+<input type="radio" name="viewOption" tabindex="2" id="showXML">
 <header>
 <h1>Structogram Editor</h1>
 </header>
@@ -68,7 +68,7 @@ window.addEventListener('DOMContentLoaded', loadSample);
 <main>
 <div style="display:inline-block;margin:0">
 <figure id="source">
-<textarea id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
+  <textarea tabindex="1" id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
 IF: external sources exist?
 open source file
 select all
@@ -113,21 +113,9 @@ text{font-family:sans-serif;fill:black;}
 </div>
 </main>
 <footer>
-<div id="githublink" style="position:absolute;top:0;right:0">
+<div id="githublink">
+  <a tabindex="0" href="https://github.com/nigjo/structogramview/">Fork me on GitHub</a>
 </div>
-<script>
-var offline='<a class="badge" href="https://github.com/nigjo/structogramview/">Fork me on GitHub</a>';
-var online='<a href="https://github.com/nigjo/structogramview/"> \
-<img width="149" height="149" \
-  src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" \
-  class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>';
-console.log(window.location.protocol);
-if(window.location.protocol==='file:'){
-  document.getElementById('githublink').innerHTML = offline;
-}else{
-  document.getElementById('githublink').innerHTML = online;
-}
-</script>
 </footer>
 </body>
 </html>

@@ -2,7 +2,7 @@
   width:35em;
   min-height:30em;
   resize:vertical;
-  max-width: 85vw;
+  max-width: 90vw;
 }
 .structcodecmd{
   color:blue;
@@ -68,9 +68,15 @@ input#showHTML:checked~nav label[for="showHTML"],
 input#showSVG:checked~nav label[for="showSVG"],
 input#showXML:checked~nav label[for="showXML"]
 {color:green;background-color:lightblue;}
+input#showHTML:focus~nav label[for="showHTML"],
+input#showSVG:focus~nav label[for="showSVG"],
+input#showXML:focus~nav label[for="showXML"]
+{box-sizing:border-box;outline:1px dotted gray;}
 body>input{
-  display:none;
+  position:absolute;
+  appearance: none;
 }
+body>input:focus{outline-style:none;}
 body{
   font-family: Segoe UI,sans-serif;
 }
@@ -100,4 +106,50 @@ figcaption {
   top: -1.5em;
   box-sizing: border-box;
   line-height: 1em;
+}
+@media (max-width: 40em){
+  body{
+    margin:0px;
+  }
+  main{
+    margin-left: 1vw;
+  }
+  footer{
+    margin:0px;
+    padding:2vw;
+    border-top:1px solid black;
+  }
+}
+@media (min-width:40em){
+  /* based on https://www.unindented.org/blog/github-ribbon-using-css-transforms/ */
+  footer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    height: 149px;
+    width: 149px;
+    z-index:-1;
+  }
+  #githublink {
+    position: absolute;
+    top: calc(-2em - 6px);
+    background-color: #EEE;
+    transform: rotate(45deg);
+    transform-origin: left bottom;
+    width: 211px;
+    box-shadow: 0 0 5px lightgray;
+  }
+  #githublink a {
+    border: 1px solid #AAA;
+    color: #000;
+    display: block;
+    margin: 1px 0;
+    padding: .5em 0;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Segoe UI","Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: .8em;
+    font-weight: bold;
+  }
 }
