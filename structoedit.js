@@ -37,7 +37,7 @@ function generateStructureView(diagram, xmlviewid){
 function updateView(structview){
   var codeid = structview.dataset.structcodeId;
   var sourcecode = document.querySelector('#'+codeid);
-  var erroritem = sourcecode.parentNode.lastElementChild;
+  var erroritem = sourcecode.parentNode;
   try{
     erroritem.dataset.parsererror = '';
     var diagram = generateDiagram(structview);
