@@ -123,6 +123,10 @@ figcaption {
   }
 }
 @media (min-width:40em){
+  body>*{
+    z-index:2;
+    position:relative;
+  }
   /* based on https://www.unindented.org/blog/github-ribbon-using-css-transforms/ */
   footer {
     position: absolute;
@@ -131,7 +135,7 @@ figcaption {
     overflow: hidden;
     height: 149px;
     width: 149px;
-    z-index:-1;
+    z-index: 0;
   }
   #githublink {
     position: absolute;
