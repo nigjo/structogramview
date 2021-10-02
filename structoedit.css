@@ -3,6 +3,30 @@
   min-height:30em;
   resize:vertical;
   max-width: 90vw;
+  background:none;
+  margin: 0;
+}
+.structcodemarks .mark{
+  display:inline-block;
+  background-color: PaleTurquoise;
+}
+.scroller {
+  position: relative;
+	height: calc(100% - .7em - 4px);
+	overflow: hidden;
+}
+.scroller>*{
+  line-height: 1.2em;
+	font-family: monospace;
+	white-space: pre;
+  position:relative;
+  padding: .1em;
+}
+.structcodemarks {
+	position: absolute;
+	z-index: -1;
+	margin: 2 0 0 2;
+	color: transparent;
 }
 .structcodecmd{
   color:blue;
@@ -14,7 +38,7 @@ figure{
   vertical-align: top;
   margin: 2em .5em 1em .5em;
   padding:.25em;
-  padding-bottom: 0;
+  /*! padding-bottom: 0; */
   border:1px dotted gray;
 }
 figcaption{

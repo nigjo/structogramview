@@ -67,8 +67,9 @@ window.addEventListener('DOMContentLoaded', loadSample);
 </nav>
 <main>
 <div style="display:inline-block;margin:0">
-<figure id="source">
-  <textarea tabindex="1" id="sample1" class="structcode" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
+<figure id="source"><div class="scroller">
+<div id="sample1marks" class="structcodemarks"></div>
+  <textarea tabindex="1" id="sample1" class="structcode" data-erroritem="source" data-marks="sample1marks" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
 IF: external sources exist?
 open source file
 select all
@@ -84,6 +85,7 @@ write your code
 ENDIF:
 export as SVG
 </textarea>
+</div>
 <figcaption>Sourcecode</figcaption>
 </figure>
 <figure id="diagram">
