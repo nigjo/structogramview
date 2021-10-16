@@ -11,11 +11,11 @@ struct-diagram:before{
   line-height: 1.5em;
   padding-left: .25em;
 }
-struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
+struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break,struct-comment,struct-comment{
   display:block;
   box-sizing: border-box;
 }
-struct-decision>struct-block,struct-select>struct-case,struct-select>struct-block{
+struct-concurrent>struct-block,struct-decision>struct-block,struct-select>struct-case,struct-select>struct-block{
   display: table-cell;
   background-color:lightgray;
 }
@@ -25,13 +25,19 @@ struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struc
   border-top:1px solid black;
   border-left:1px solid black;
 }
-struct-decision,struct-select{
+struct-decision,struct-select,struct-concurrent{
   display:table;
   width:100%;
   box-sizing: border-box;
   padding:0px;
   padding-top:2.25em;
   position:relative;
+}
+struct-concurrent{
+  padding-top:2.25em;
+  padding-bottom:2.25em;
+  background-color:white;
+  border-left:1px solid black;
 }
 struct-decision:after,struct-select:after{
   text-align:center;
@@ -184,6 +190,59 @@ struct-break:before,struct-break:after{
   width:1.5em;
   height:1em;
   left:0;
+}
+x-struct-concurrent:before,x-struct-concurrent:after{
+  position: absolute;
+  top:0em;
+  content:'';
+  box-sizing: border-box;
+  height:100%;
+  border-style: solid;
+}
+x-struct-concurrent:before{
+  border-width: 2.25em 2.25em 2.25em 0;
+  border-color: transparent black transparent transparent;
+}
+x-struct-concurrent:after{
+  right:0;
+  border-width: 2.25em 0 2.25em 2.25em;
+  border-color: transparent transparent transparent black;
+}
+struct-concurrent:before,struct-concurrent:after,
+struct-concurrent>struct-block:first-of-type:after,
+struct-concurrent>struct-block:last-of-type:after
+{
+  position:absolute;
+  content:'';
+  border-top:1px solid black;
+  width:3.2em;
+  transform-origin: top left;
+}
+struct-concurrent:before{
+  transform: rotate(-45deg);
+}
+struct-concurrent:after{
+  top:-.05em;
+  right:-.91em;
+  transform: rotate(45deg);
+}
+struct-concurrent>struct-block:first-of-type:after{
+  transform: rotate(45deg);
+}
+struct-concurrent>struct-block:last-of-type:after{
+  transform: rotate(-45deg);
+  right:0;
+  transform-origin: top right;
+}
+struct-concurrent{
+  xborder-color:red;
+  overflow: hidden;
+}
+struct-concurrent>struct-block{
+  position: relative;
+  border-bottom:1px solid black;
+  x: 3px dotted green;
+  xz-index:1;
 }
 struct-diagram.compactselect struct-select{
   display:flex;
