@@ -1,4 +1,4 @@
-= Structogram Viewer
+= Structogram Editor
 
 A browser based structogram (Nassi-Shneiderman diagram) viewer (and creator)
 
@@ -55,3 +55,9 @@ inside the SVG file.
 
 Beside of that you may use your browsers or OS' functions to take screenshots.
 
+== Show Structograms on any web page
+
+To display a Structogram as HTML in any web page only to the two files
+`structoview.js` and `structoview.css` are needed. The JS will introduce the
+custom elements `struct-*` and the css does the visual part. It is up to
+you to create the valid ("XML"-)structure.
