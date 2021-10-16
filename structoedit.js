@@ -3,9 +3,9 @@ function generateDiagram(viewer){
   var sourcecode = document.querySelector('#'+codeid);
   var diagram;
   if(sourcecode.value)
-    diagram = StructDiagram.parseStructCode(sourcecode.value);
+    diagram = parseStructCode(sourcecode.value);
   else
-    diagram = StructDiagram.parseStructCode(sourcecode.textContent);
+    diagram = parseStructCode(sourcecode.textContent);
   while(viewer.children.length>0)
     viewer.removeChild(viewer.firstChild);
   viewer.appendChild(diagram);
@@ -127,4 +127,139 @@ function updateContent(ta, keyevent){
 function checkCurrentContent(ta, e){
   clearTimeout(window.nextUpdate);
   window.nextUpdate = setTimeout(function(){updateContent(ta, e)}, 500);
+}
+function parseStructCode(structCode){
+  var stack = [new StructDiagram()];
+  
+  var lastlineindex;
+  var lines = structCode.split('\n');
+
+  function checkBlock(blockname){
+    var stackblock=stack[0].getName();
+    if(stack[0] instanceof StructBlock){
+      stackblock=stack[1].getName();
+    }
+    if(stackblock!==blockname){
+      throw 'illegal end of block. Expecting END'+ stackblock+':';
+    }
+  }
+  function checkEmptyBlock(block){
+    if(block.children.length===0){
+      block.appendChild(new StructSequence());//.textContent=' ';
+    }
+  }
+  
+  for(var i=0;i<lines.length;i++){      
+    try{
+      var trimmed = lines[i].trim();
+      if(trimmed.length===0)
+        continue;
+      lastlineindex = i;
+      if (trimmed.startsWith('#')) {
+        let comment = trimmed.substr(1).trim();
+        if (comment.length > 0) {
+          if (!(stack[0].lastElementChild instanceof StructComment)) {
+            stack[0].appendChild(new StructComment());
+          }
+          stack[0].lastElementChild.addComment(comment);
+        }
+      }else if(trimmed.startsWith('CAPTION:')){
+        stack[0].caption = trimmed.substr(8).trim();
+      }else if(trimmed.startsWith('IF:')){
+        var item = new StructDecision();
+        item.condition = trimmed.substr(3).trim();
+        stack.unshift(item);
+        stack.unshift(item.thenBlock);
+      }else if(trimmed.startsWith('ELSE:')){
+        var block = stack.shift();
+        stack.unshift(stack[0].elseBlock);
+      }else if(trimmed.startsWith('ENDIF:')){
+        checkBlock('IF');
+        var block = stack.shift();
+        var item = stack.shift();
+        checkEmptyBlock(item.elseBlock);
+        stack[0].appendChild(item);
+      }else if(trimmed.startsWith('SELECT:')){
+        var item = new StructChoose();
+        item.condition = trimmed.substr(7).trim();
+        stack.unshift(item);
+      }else if(trimmed.startsWith('CASE:')){
+        var item = stack[0];
+        if(item instanceof StructBlock){
+          var prevcase = stack.shift();
+          checkEmptyBlock(prevcase);
+        }
+        var block = stack[0].createNextCase();
+        block.condition = trimmed.substr(5).trim();
+        stack.unshift(block);
+      }else if(trimmed.startsWith('DEFAULT:')){
+        var item = stack[0];
+        if(item instanceof StructBlock){
+          var prevcase = stack.shift();
+          checkEmptyBlock(prevcase);
+        }
+        stack.unshift(stack[0].defaultBlock);
+      }else if(trimmed.startsWith('ENDSELECT:')){
+        checkBlock('SELECT');
+        var item = stack[0];
+        if(item instanceof StructBlock){
+          var prevcase = stack.shift();
+          checkEmptyBlock(prevcase);
+        }
+        var item = stack.shift();
+        checkEmptyBlock(item.defaultBlock);
+        stack[0].appendChild(item);
+      }else if(trimmed.startsWith('FOR:')){
+        var item = new StructIteration();
+        item.condition = trimmed.substr(4).trim();
+        stack.unshift(item);
+        stack.unshift(item.loopBlock);
+      }else if(trimmed.startsWith('ENDFOR:')){
+        checkBlock('FOR');
+        var block = stack.shift();
+        var item = stack.shift();
+        checkEmptyBlock(item.loopBlock);
+        stack[0].appendChild(item);
+      }else if(trimmed.startsWith('LOOP:')){
+        var item;
+        if(trimmed!=='LOOP:'){
+          item = new StructIteration();
+          item.condition = trimmed.substr(5).trim();
+        }else{
+          item = new StructLoop();
+        }
+        stack.unshift(item);
+        stack.unshift(item.loopBlock);
+      }else if(trimmed.startsWith('ENDLOOP:')){
+        checkBlock('LOOP');
+        var block = stack.shift();
+        var item = stack.shift();
+        if(item instanceof StructLoop && trimmed!=='ENDLOOP:'){
+          item.condition = trimmed.substr(8).trim();
+        }
+        checkEmptyBlock(item.loopBlock);
+        stack[0].appendChild(item);
+      } else if(trimmed.startsWith('CALL:')) {
+        stack[0].appendChild(new StructCall()).textContent = trimmed.substr(5).trim();
+      } else if(trimmed.startsWith('BREAK:')) {
+        stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(6).trim();
+      } else if(trimmed.startsWith('RETURN:')) {
+        stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(7).trim();
+      } else {
+        stack[0].appendChild(new StructSequence()).textContent = trimmed;
+      }
+    }catch(e){
+      throw new StructCodeParseException(i, lines[i], e);
+    }
+  }
+  if(stack.length!==1){
+    var blockname=stack[0].getName();
+    if(stack[0] instanceof StructBlock){
+      blockname=stack[1].getName();
+    }
+    throw new StructCodeParseException(lastlineindex,lines[lastlineindex],
+    'illegal stack size. Expecting END'+ blockname+':');
+  }
+  
+  return stack.shift();
 }
