@@ -65,7 +65,7 @@ function hightlightText(sourcecode){
   if(sourcecode.dataset.marks){
     let marker=document.getElementById(sourcecode.dataset.marks);
     //console.log(marker);
-    let content = sourcecode.value;  
+    let content = sourcecode.value;
     marker.textContent='';
     const Commands = /^(\s*)([A-Z]+:)(.*)$/;
     for(let line of content.split('\n')){
@@ -85,12 +85,12 @@ function hightlightText(sourcecode){
     }
     //marker.textContent = content;
   }
-  
+
   // let copy = sourcecode.cloneNode(false);
   // copy.selectionStart = sourcecode.selectionStart;
   // copy.selectionEnd = sourcecode.selectionEnd;
-  
-  
+
+
   //sourcecode.replaceWith(copy);
 }
 
@@ -103,7 +103,7 @@ function generateViews(){
         allCodes[i].addEventListener('scroll',(evt)=>{
           //console.log(marker, evt);
           let mstyle=getComputedStyle(marker);
-          marker.style.top = 
+          marker.style.top =
               -evt.target.scrollTop
               +parseInt(mstyle.insetInlineStart);
         });
@@ -114,8 +114,8 @@ function generateViews(){
   for(var i=0;i<allViews.length;i++){
     updateView(allViews[i]);
   }
-  
-  
+
+
 }
 window.addEventListener('DOMContentLoaded', generateViews);
 
@@ -127,7 +127,9 @@ function updateContent(ta, keyevent){
 function checkCurrentContent(ta, e){
   clearTimeout(window.nextUpdate);
   window.nextUpdate = setTimeout(function(){updateContent(ta, e)}, 500);
+  hightlightText(e.target);
 }
+
 function parseStructCode(structCode){
   var stack = [new StructDiagram()];
   
@@ -148,8 +150,8 @@ function parseStructCode(structCode){
       block.appendChild(new StructSequence());//.textContent=' ';
     }
   }
-  
-  for(var i=0;i<lines.length;i++){      
+
+  for(var i=0;i<lines.length;i++){
     try{
       var trimmed = lines[i].trim();
       if(trimmed.length===0)
@@ -245,6 +247,28 @@ function parseStructCode(structCode){
         stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(6).trim();
       } else if(trimmed.startsWith('RETURN:')) {
         stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(7).trim();
+      } else if(trimmed.startsWith('CONCURRENT:')) {
+        var item = new StructConcurrent();
+        //item.condition = trimmed.substr(7).trim();
+        stack.unshift(item);
+      } else if(trimmed.startsWith('THREAD:')) {
+        var item = stack[0];
+        if(item instanceof StructBlock){
+          var prevcase = stack.shift();
+          checkEmptyBlock(prevcase);
+        }
+        var block = stack[0].createThread();
+        stack.unshift(block);
+      } else if(trimmed.startsWith('ENDCONCURRENT:')) {
+        checkBlock('CONCURRENT');
+        var item = stack[0];
+        if(item instanceof StructBlock){
+          var prevcase = stack.shift();
+          checkEmptyBlock(prevcase);
+        }
+        var item = stack.shift();
+        //checkEmptyBlock(item.defaultBlock);
+        stack[0].appendChild(item);
       } else {
         stack[0].appendChild(new StructSequence()).textContent = trimmed;
       }
@@ -260,6 +284,6 @@ function parseStructCode(structCode){
     throw new StructCodeParseException(lastlineindex,lines[lastlineindex],
     'illegal stack size. Expecting END'+ blockname+':');
   }
-  
+
   return stack.shift();
 }

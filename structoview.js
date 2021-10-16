@@ -103,10 +103,18 @@ class StructCall extends StructSequence {
 }
 class StructBreak extends StructSequence {
 }
+class StructConcurrent extends StructContainer {
+  createThread(){
+    var nextThread = new StructBlock();
+    this.appendChild(nextThread);
+    return nextThread;
+  }
+}
 class StructDiagram extends StructElement {
   set caption(caption){this.setAttribute('caption',caption);}
   get caption(){return this.getAttribute('caption');}
 }
+
 customElements.define('struct-diagram',StructDiagram);
 customElements.define('struct-sequence',StructSequence);
 customElements.define('struct-comment',StructComment);
@@ -118,6 +126,7 @@ customElements.define('struct-loop',StructLoop);
 customElements.define('struct-iteration',StructIteration);
 customElements.define('struct-call',StructCall);
 customElements.define('struct-break',StructBreak);
+customElements.define('struct-concurrent',StructConcurrent);
 
 function StructCodeParseException(linenum, line, error){
   this.linenum=linenum;
