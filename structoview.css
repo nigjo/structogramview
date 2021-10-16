@@ -19,7 +19,7 @@ struct-concurrent>struct-block,struct-decision>struct-block,struct-select>struct
   display: table-cell;
   background-color:lightgray;
 }
-struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
+struct-concurrent,struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   padding:.25em;
   background-color:white;
   border-top:1px solid black;
@@ -34,10 +34,7 @@ struct-decision,struct-select,struct-concurrent{
   position:relative;
 }
 struct-concurrent{
-  padding-top:2.25em;
   padding-bottom:2.25em;
-  background-color:white;
-  border-left:1px solid black;
 }
 struct-decision:after,struct-select:after{
   text-align:center;
@@ -162,6 +159,7 @@ struct-select>struct-block:before {
 struct-block:not(:first-child){
   border-left:1px solid black;
 }
+struct-concurrent>struct-block>*:last-child,
 struct-decision>struct-block>*:last-child,
 struct-loop>struct-block>*:last-child,
 struct-select>*>*:last-child{
@@ -222,11 +220,13 @@ struct-concurrent{
   xborder-color:red;
   overflow: hidden;
 }
+struct-concurrent>struct-block:first-child>*{
+  border-left: none !important;
+}
 struct-concurrent>struct-block{
   position: relative;
   border-bottom:1px solid black;
-  x: 3px dotted green;
-  xz-index:1;
+  border-left: none !important;
 }
 struct-diagram.compactselect struct-select{
   display:flex;

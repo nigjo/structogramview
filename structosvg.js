@@ -392,6 +392,17 @@ class SVGGenerator {
       let t = this.addText(group, structElement, "condition");
       t.setAttribute("y", this.scale(structElement.scrollHeight
               - this.lineHeight + this.textHeight - 1));
+    } else if (structElement instanceof StructConcurrent) {
+      group.setAttribute("class", "concurrent");
+      let threadRect = structElement.firstElementChild.getBoundingClientRect();
+      console.log("CONCURRENT", threadRect);
+      let diag = threadRect.top - cRect.top;
+      let right = cRect.right-cRect.left;
+      let bottom = cRect.bottom-cRect.top;
+      this.addLine(group, 0, diag, diag, 0);
+      this.addLine(group, right, diag, right-diag, 0);
+      this.addLine(group, 0, bottom-diag, diag, bottom);
+      this.addLine(group, right, bottom-diag, right-diag, bottom);
     } else if (structElement instanceof StructDiagram) {
       group.setAttribute("class", "diagram");
       if (structElement.hasAttribute("caption")) {
