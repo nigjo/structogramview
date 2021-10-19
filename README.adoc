@@ -38,6 +38,11 @@ Every *Command* has to be at the start of a line and upper-case. Indentation is 
   A condition set on `LOOP:` will create a "test first loop" (iteration).
   A condition set on `ENDLOOP:` will create a "test last loop" (loop).
 
+`CONCURRENT:`, `ENDCONCURRENT:` and `THREAD:`:: define parallel tasks
+  All Sequences are treated as on task. If there are more than one sequence
+  element for one task use `THREAD:` to define the start of the task. To
+  start the next task use `THREAD:` again.
+
 `CALL:`:: a call to another routine/method/function.
 
 `BREAK:` or `RETURN:`:: a break from the current block or diagram.
