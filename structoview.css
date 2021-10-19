@@ -15,9 +15,10 @@ struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-bre
   display:block;
   box-sizing: border-box;
 }
-struct-concurrent>struct-block,struct-decision>struct-block,struct-select>struct-case,struct-select>struct-block{
+struct-concurrent>*,struct-decision>struct-block,struct-select>struct-case,struct-select>struct-block{
   display: table-cell;
   background-color:lightgray;
+  vertical-align: top;
 }
 struct-concurrent,struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   padding:.25em;
@@ -32,6 +33,7 @@ struct-decision,struct-select,struct-concurrent{
   padding:0px;
   padding-top:2.25em;
   position:relative;
+  /*! border-collapse: collapse; */
 }
 struct-concurrent{
   padding-bottom:2.25em;
@@ -164,6 +166,7 @@ struct-decision>struct-block>*:last-child,
 struct-loop>struct-block>*:last-child,
 struct-select>*>*:last-child{
   border-bottom: 1px solid black;
+  xmargin-bottom:1px;
 }
 struct-loop>struct-block>*:first-child{
   border-top:none;
@@ -190,8 +193,8 @@ struct-break:before,struct-break:after{
   left:0;
 }
 struct-concurrent:before,struct-concurrent:after,
-struct-concurrent>struct-block:first-of-type:before,
-struct-concurrent>struct-block:last-of-type:after
+struct-concurrent>*:first-child:before,
+struct-concurrent>*:last-child:after
 {
   position:absolute;
   content:'';
@@ -203,30 +206,31 @@ struct-concurrent:before{
   transform: rotate(-45deg);
 }
 struct-concurrent:after{
-  top:-.05em;
+  top:0;
   right:-.91em;
   transform: rotate(45deg);
 }
-struct-concurrent>struct-block:first-of-type:before{
+struct-concurrent>*:first-child:before{
   transform: rotate(45deg);
   bottom:-1px;
+  left: 0;
 }
-struct-concurrent>struct-block:last-of-type:after{
+struct-concurrent>*:last-child:after{
   transform: rotate(-45deg);
   right:0;
   transform-origin: top right;
+  bottom: -2px;
 }
 struct-concurrent{
-  xborder-color:red;
+  /*! xborder-color:red; */
   overflow: hidden;
 }
-struct-concurrent>struct-block:first-child>*{
+struct-concurrent>struct-block>*{
   border-left: none !important;
 }
-struct-concurrent>struct-block{
+struct-concurrent > *{
   position: relative;
   border-bottom:1px solid black;
-  border-left: none !important;
 }
 struct-diagram.compactselect struct-select{
   display:flex;
