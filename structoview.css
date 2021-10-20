@@ -33,7 +33,6 @@ struct-decision,struct-select,struct-concurrent{
   padding:0px;
   padding-top:2.25em;
   position:relative;
-  /*! border-collapse: collapse; */
 }
 struct-concurrent{
   padding-bottom:2.25em;
@@ -132,14 +131,14 @@ struct-select>struct-block>*{
   border-left:none;
 }
 struct-decision>struct-block:first-child:before,
-struct-select>struct-case:first-of-type:before {
-  background-image:url(line_tl_br.png);
+struct-select>struct-case:first-of-type:before,
+struct-break:after {
+  background-image:linear-gradient(to top right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
 }
 struct-decision>struct-block:last-child:before,
-struct-select>struct-block:before {
-  background-image:url(line_bl_tr.png);
-}
-struct-select>struct-case:last-of-type:before{
+struct-select>struct-block:before,
+struct-break:before {
+  background-image:linear-gradient(to bottom right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
 }
 struct-select>struct-case:after{
   content: attr(condition);
@@ -176,11 +175,9 @@ struct-break{
   position:relative;
 }
 struct-break:before{
-  background-image:url(line_bl_tr.png);
   top:0;
 }
 struct-break:after{
-  background-image:url(line_tl_br.png);
   bottom:0;
 }
 struct-break:before,struct-break:after{
@@ -222,7 +219,6 @@ struct-concurrent>*:last-child:after{
   bottom: -2px;
 }
 struct-concurrent{
-  /*! xborder-color:red; */
   overflow: hidden;
 }
 struct-concurrent>struct-block>*{
