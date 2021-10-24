@@ -153,7 +153,7 @@ function downloadSvg(event, viewerId, withSources = true, withSourceTree = false
       let metadata = getMetadata(resultDoc);
       metadata.append(astCopy, "\n");
     }
-}
+  }
 
 }
 
@@ -293,10 +293,12 @@ class SVGGenerator {
     }
 
     let style = getComputedStyle(structElement);
+    let topdelta = style.borderTopWidth==='0px'?1:0;
+    let leftdelta = style.borderLeftWidth==='0px'?1:0;
     //console.log(SVGGenerator.SVGLOGGER, style);
     this.addBorder(group, style.borderRightWidth, cRect.width, 0, cRect.width, cRect.height);
     this.addBorder(group, style.borderLeftWidth, 0, 0, 0, cRect.height);
-    this.addBorder(group, style.borderTopWidth, 0, 0, cRect.width, 0);
+    this.addBorder(group, style.borderTopWidth, -leftdelta, 0, cRect.width+leftdelta, 0);
     this.addBorder(group, style.borderBottomWidth, 0, cRect.height, cRect.width, cRect.height);
 
     if (structElement instanceof StructComment) {
@@ -369,8 +371,8 @@ class SVGGenerator {
     } else if (structElement instanceof StructDecision) {
       group.setAttribute("class", "if");
       let tbRect = structElement.thenBlock.getBoundingClientRect();
-      this.addLine(group, 0, 0, tbRect.width, tbRect.top - cRect.top);
-      this.addLine(group, tbRect.width, tbRect.top - cRect.top, cRect.width, 0);
+      this.addLine(group, 0, 0, tbRect.width+1, tbRect.top - cRect.top);
+      this.addLine(group, tbRect.width+1, tbRect.top - cRect.top, cRect.width, 0);
       let t = this.addText(group, structElement, "condition");
       this.center(structElement, t);
       this.addWhiteShadow(t);
