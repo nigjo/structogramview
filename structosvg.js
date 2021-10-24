@@ -390,9 +390,11 @@ class SVGGenerator {
     } else if (structElement instanceof StructLoop) {
       group.setAttribute("class", "while");
       let t = this.addText(group, structElement, "condition");
-      t.setAttribute("y", this.scale(structElement.scrollHeight
-              - this.lineHeight + this.textHeight - 1));
-    } else if (structElement instanceof StructConcurrent) {
+      if(t){
+        t.setAttribute("y", this.scale(structElement.scrollHeight
+                - this.lineHeight + this.textHeight - 1));
+      }
+    } else if (structElement instanceof StructConcurrent) {      
       group.setAttribute("class", "concurrent");
       let threadRect = structElement.firstElementChild.getBoundingClientRect();
       console.log("CONCURRENT", threadRect);

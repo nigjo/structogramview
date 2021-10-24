@@ -222,6 +222,17 @@ function parseStructCode(structCode){
         var item = stack.shift();
         checkEmptyBlock(item.loopBlock);
         stack[0].appendChild(item);
+      }else if(trimmed.startsWith('REPEAT:')){
+        var item = new StructRepeat();
+        item.condition = trimmed.substr(7).trim();
+        stack.unshift(item);
+        stack.unshift(item.loopBlock);
+      }else if(trimmed.startsWith('ENDREPEAT:')){
+        checkBlock('REPEAT');
+        var BLOCK = stack.shift();
+        var item = stack.shift();
+        checkEmptyBlock(item.loopBlock);
+        stack[0].appendChild(item);
       }else if(trimmed.startsWith('LOOP:')){
         var item;
         if(trimmed!=='LOOP:'){

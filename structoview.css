@@ -11,7 +11,7 @@ struct-diagram:before{
   line-height: 1.5em;
   padding-left: .25em;
 }
-struct-sequence,struct-block,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
+struct-sequence,struct-block,struct-loop,struct-iteration,struct-repeat,struct-call,struct-break,struct-comment{
   display:block;
   box-sizing: border-box;
 }
@@ -20,7 +20,7 @@ struct-concurrent>*,struct-decision>struct-block,struct-select>struct-case,struc
   background-color:lightgray;
   vertical-align: top;
 }
-struct-concurrent,struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
+struct-repeat,struct-concurrent,struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   padding:.25em;
   background-color:white;
   border-top:1px solid black;
@@ -71,7 +71,7 @@ struct-decision>struct-block:first-child:after{
   content:var(--decision-then);
   left: .25em;
 }
-struct-iteration:before{
+struct-iteration:before,struct-repeat:before{
   content:attr(condition);
   display:block;
   height:0px;
@@ -79,15 +79,15 @@ struct-iteration:before{
   top:-1.75em;
   left:-1em;
 }
-struct-iteration{
+struct-iteration,struct-loop,struct-repeat{
   padding:0px;
-  padding-top:2em;
   padding-left:1.5em;
 }
-struct-loop{
-  padding:0px;
+struct-iteration,struct-repeat{
+  padding-top:2em;
+}
+struct-loop,struct-repeat{
   padding-bottom:2em;
-  padding-left:1.5em;
 }
 struct-loop:after{
   display:block;
@@ -162,10 +162,10 @@ struct-block:not(:first-child){
 }
 struct-concurrent>struct-block>*:last-child,
 struct-decision>struct-block>*:last-child,
+struct-repeat>struct-block>*:last-child,
 struct-loop>struct-block>*:last-child,
 struct-select>*>*:last-child{
   border-bottom: 1px solid black;
-  xmargin-bottom:1px;
 }
 struct-loop>struct-block>*:first-child{
   border-top:none;

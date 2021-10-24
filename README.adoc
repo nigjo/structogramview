@@ -38,6 +38,9 @@ Every *Command* has to be at the start of a line and upper-case. Indentation is 
   A condition set on `LOOP:` will create a "test first loop" (iteration).
   A condition set on `ENDLOOP:` will create a "test last loop" (loop).
 
+`REPEAT:`, `ENDREPEAT:`:: Defines an endless loop block. An optional "condition"
+  can be defined after `REPEAT:` or `ENDREPEAT:` to set a "checked loop".
+
 `CONCURRENT:`, `ENDCONCURRENT:` and `THREAD:`:: define parallel tasks
   All Sequences are treated as on task. If there are more than one sequence
   element for one task use `THREAD:` to define the start of the task. To

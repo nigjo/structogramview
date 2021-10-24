@@ -99,6 +99,11 @@ class StructIteration extends StructLoop {
     return "FOR";
   }
 }
+class StructRepeat extends StructIteration {
+  getName(){
+    return "REPEAT";
+  }
+}
 class StructCall extends StructSequence {
 }
 class StructBreak extends StructSequence {
@@ -124,6 +129,7 @@ customElements.define('struct-select',StructChoose);
 customElements.define('struct-case',StructCaseBlock);
 customElements.define('struct-loop',StructLoop);
 customElements.define('struct-iteration',StructIteration);
+customElements.define('struct-repeat',StructRepeat);
 customElements.define('struct-call',StructCall);
 customElements.define('struct-break',StructBreak);
 customElements.define('struct-concurrent',StructConcurrent);
