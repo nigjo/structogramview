@@ -1,3 +1,5 @@
+/* global StructBlock */
+
 function generateDiagram(viewer){
   var codeid = viewer.dataset.structcodeId;
   var sourcecode = document.querySelector('#'+codeid);
@@ -256,8 +258,11 @@ function parseStructCode(structCode){
         stack[0].appendChild(new StructCall()).textContent = trimmed.substr(5).trim();
       } else if(trimmed.startsWith('BREAK:')) {
         stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(6).trim();
-      } else if(trimmed.startsWith('RETURN:')) {
-        stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(7).trim();
+      } else if (trimmed.startsWith('RETURN:')
+              || trimmed.startsWith('EXIT:')) {
+        let item = new StructBreak();
+        item.exit = true;
+        stack[0].appendChild(item).textContent = trimmed.substr(7).trim();
       } else if(trimmed.startsWith('CONCURRENT:')) {
         var item = new StructConcurrent();
         //item.condition = trimmed.substr(7).trim();

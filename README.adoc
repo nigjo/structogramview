@@ -48,7 +48,7 @@ Every *Command* has to be at the start of a line and upper-case. Indentation is 
 
 `CALL:`:: a call to another routine/method/function.
 
-`BREAK:` or `RETURN:`:: a break from the current block or diagram.
+`BREAK:`, `EXIT:` or `RETURN:`:: a break from the current block or diagram.
 
 Every line not starting with a _Command_ is treated as a simple _sequence_.
 

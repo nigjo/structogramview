@@ -2,6 +2,7 @@
   --structoview-then:'true';
   --structoview-else:'false';
   --structoview-default:'default';
+  --structoview-exit:'exit';
 }
 struct-diagram:before{
   position:relative;
@@ -176,6 +177,10 @@ struct-loop>struct-block>*:first-child{
 }
 struct-break:empty:before{
   content:' ';
+  position: relative;
+}
+struct-break[exit="true"]:before{
+  content: var(--structoview-exit) ' ';
   position: relative;
 }
 struct-break{

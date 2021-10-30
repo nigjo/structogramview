@@ -107,6 +107,16 @@ class StructRepeat extends StructIteration {
 class StructCall extends StructSequence {
 }
 class StructBreak extends StructSequence {
+  set exit(isexit){
+    if(isexit){
+      this.setAttribute("exit", "true");
+    }else{
+      this.removeAttribute("exit");
+    }
+  }
+  get exit(){
+    return this.getAttribute("exit")==="true";
+  }
 }
 class StructConcurrent extends StructContainer {
   createThread(){
