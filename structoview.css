@@ -1,6 +1,7 @@
-struct-diagram{
-  --decision-then:'true';
-  --decision-else:'false';
+:root{
+  --structoview-then:'true';
+  --structoview-else:'false';
+  --structoview-default:'default';
 }
 struct-diagram:before{
   position:relative;
@@ -64,11 +65,11 @@ struct-select>struct-block:after{
   color:gray;
 }
 struct-decision>struct-block:last-child:after{
-  content:var(--decision-else);
+  content:var(--structoview-else);
   right:.25em;
 }
 struct-decision>struct-block:first-child:after{
-  content:var(--decision-then);
+  content:var(--structoview-then);
   left: .25em;
 }
 struct-iteration:before,struct-repeat:before{
@@ -131,13 +132,11 @@ struct-select>struct-block>*{
   border-left:none;
 }
 struct-decision>struct-block:first-child:before,
-struct-select>struct-case:first-of-type:before,
-struct-break:after {
+struct-select>struct-case:first-of-type:before{
   background-image:linear-gradient(to top right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
 }
 struct-decision>struct-block:last-child:before,
-struct-select>struct-block:before,
-struct-break:before {
+struct-select>struct-block:before{
   background-image:linear-gradient(to bottom right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
 }
 struct-select>struct-case:after{
@@ -157,6 +156,11 @@ struct-select>struct-block:before {
   background-repeat: no-repeat;
   z-index:0;
 }
+struct-select>struct-block:after{
+  content:var(--structoview-default);
+  right: .25em;
+}
+
 struct-block:not(:first-child){
   border-left:1px solid black;
 }
@@ -170,24 +174,25 @@ struct-select>*>*:last-child{
 struct-loop>struct-block>*:first-child{
   border-top:none;
 }
+struct-break:empty:before{
+  content:' ';
+  position: relative;
+}
 struct-break{
   padding-left:1.5em;
   position:relative;
 }
-struct-break:before{
-  top:0;
-}
 struct-break:after{
-  bottom:0;
-}
-struct-break:before,struct-break:after{
   content:'';
-  background-size: 100% 100%;
-  background-position: center;
   position:absolute;
-  width:1.5em;
-  height:1em;
-  left:0;
+  border:1px solid;
+  border-top-color:transparent;
+  border-right-color:transparent;
+  transform:rotate(45deg);
+  height:1.4em;
+  width:1.4em;
+  top:.25em;
+  left:.28em;
 }
 struct-concurrent:before,struct-concurrent:after,
 struct-concurrent>*:first-child:before,
@@ -247,7 +252,7 @@ struct-diagram.compactselect struct-select>*:first-child{
   border-left:1px solid black;
 }
 struct-diagram.compactselect struct-select>struct-block:after{
-  content:'default';
+  right: unset;
 }
 struct-call{
   padding-left:1em;
