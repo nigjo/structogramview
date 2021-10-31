@@ -38,7 +38,10 @@ function downloadSvg(event, viewerId, withSources = true, withSourceTree = false
   let svg = SVGManger.getSvgImage(viewer);
   let data = getDownloadData(svg, viewer, withSources, withSourceTree);
   dlLink.href = data;
-  dlLink.download = "diagram.svg";
+  let caption = viewer.firstElementChild.caption || 'diagram';
+  //from MDN: "If the name is not a valid file name in the underlying OS, 
+  //the browser will adjust it."
+  dlLink.download = caption + ".svg";
   dlLink.click();
   console.log(SVGGenerator.SVGLOGGER, "download svg");
   setTimeout(function () {
