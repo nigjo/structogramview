@@ -20,7 +20,9 @@ function generateStructureView(diagram, xmlviewid){
   xdoc.appendChild(copy);
   var xmllines = new XMLSerializer().serializeToString(xdoc)
           .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
+          .replace(/<([^\/][-a-z]*)><\/\1>/g, '<$1>	</$1>')
           .replace(/>(?=<)/g, '>\n')
+          .replace(/>	</g, '><')
           .split('\n');
   var indended = '';
   var indent = '';
