@@ -3,6 +3,26 @@
   --structoview-else:'false';
   --structoview-default:'default';
   --structoview-exit:'exit';
+  
+  --structoview-text:black;
+  --structoview-border:lightblue;
+  --structoview-line:black;
+  --structoview-hint:gray;
+  --structoview-comment:var(--structoview-hint);
+  --structoview-bg:white;
+  --structoview-bg-block:lightgray;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --structoview-text:Gainsboro;
+    --structoview-border:navy;
+    --structoview-line:gray;
+    --structoview-hint:gray;
+    --structoview-comment:var(--structoview-hint);
+    --structoview-bg:black;
+    --structoview-bg-block:#303030;
+  }
+  
 }
 struct-diagram:before{
   position:relative;
@@ -19,14 +39,14 @@ struct-sequence,struct-block,struct-loop,struct-iteration,struct-repeat,struct-c
 }
 struct-concurrent>*,struct-decision>struct-block,struct-select>struct-case,struct-select>struct-block{
   display: table-cell;
-  background-color:lightgray;
+  background-color:var(--structoview-bg-block);
   vertical-align: top;
 }
 struct-repeat,struct-concurrent,struct-sequence,struct-decision,struct-select,struct-loop,struct-iteration,struct-call,struct-break,struct-comment{
   padding:.25em;
-  background-color:white;
-  border-top:1px solid black;
-  border-left:1px solid black;
+  background-color:var(--structoview-bg);
+  border-top:1px solid var(--structoview-line);
+  border-left:1px solid var(--structoview-line);
 }
 struct-decision,struct-select,struct-concurrent{
   display:table;
@@ -49,7 +69,10 @@ struct-decision:after,struct-select:after{
   width:100%;
   top:0;
   left:0;
-  text-shadow: 1px 1px white, -1px 1px white, -1px -1px white, 1px -1px white;
+  text-shadow: 1px 1px var(--structoview-bg), 
+    -1px 1px var(--structoview-bg),
+    -1px -1px var(--structoview-bg),
+    1px -1px var(--structoview-bg);
   z-index:10;
 }
 struct-decision>struct-block, struct-select>*{
@@ -63,7 +86,7 @@ struct-select>struct-block:after{
   top:-1.5em;
   font-style: italic;
   font-size: .75em;
-  color:gray;
+  color:var(--structoview-hint);
 }
 struct-decision>struct-block:last-child:after{
   content:var(--structoview-else);
@@ -102,24 +125,25 @@ struct-loop:after{
 struct-comment{
   white-space: pre-line;
   font-style:italic;
-  color:gray;
+  color:var(--structoview-comment);
 }
 struct-diagram{
+  color:var(--structoview-text);
   font-family:sans-serif;
   display: inline-block;
   min-width: 20em;
   line-height: 1.5em;
   padding:.5em;
-  background-color: lightblue;
+  background-color: var(--structoview-border);
 }
 struct-diagram>*{
-  border-right:1px solid black;
+  border-right:1px solid var(--structoview-line);
 }
 struct-diagram>*:last-child{
-  border-bottom:1px solid black;
+  border-bottom:1px solid var(--structoview-line);
 }
 struct-select>struct-case:not(:first-child){
-  border-left: 1px solid black;
+  border-left: 1px solid var(--structoview-line);
 }
 struct-block>struct-sequence{
   min-width:3em;
@@ -134,11 +158,11 @@ struct-select>struct-block>*{
 }
 struct-decision>struct-block:first-child:before,
 struct-select>struct-case:first-of-type:before{
-  background-image:linear-gradient(to top right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
+  background-image:linear-gradient(to top right, transparent calc(50% - 1px), var(--structoview-line), transparent calc(50% + 1px) );
 }
 struct-decision>struct-block:last-child:before,
 struct-select>struct-block:before{
-  background-image:linear-gradient(to bottom right, transparent calc(50% - 1px), #000, transparent calc(50% + 1px) );
+  background-image:linear-gradient(to bottom right, transparent calc(50% - 1px), var(--structoview-line), transparent calc(50% + 1px) );
 }
 struct-select>struct-case:after{
   content: attr(condition);
@@ -163,14 +187,14 @@ struct-select>struct-block:after{
 }
 
 struct-block:not(:first-child){
-  border-left:1px solid black;
+  border-left:1px solid var(--structoview-line);
 }
 struct-concurrent>struct-block>*:last-child,
 struct-decision>struct-block>*:last-child,
 struct-repeat>struct-block>*:last-child,
 struct-loop>struct-block>*:last-child,
 struct-select>*>*:last-child{
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--structoview-line);
 }
 struct-loop>struct-block>*:first-child{
   border-top:none;
@@ -191,6 +215,7 @@ struct-break:after{
   content:'';
   position:absolute;
   border:1px solid;
+  border-color: var(--structoview-line);
   border-top-color:transparent;
   border-right-color:transparent;
   transform:rotate(45deg);
@@ -205,7 +230,7 @@ struct-concurrent>*:last-child:after
 {
   position:absolute;
   content:'';
-  border-top:1px solid black;
+  border-top:1px solid var(--structoview-line);
   width:3.2em;
   transform-origin: top left;
 }
@@ -236,7 +261,7 @@ struct-concurrent>struct-block>*{
 }
 struct-concurrent > *{
   position: relative;
-  border-bottom:1px solid black;
+  border-bottom:1px solid var(--structoview-line);
 }
 struct-diagram.compactselect struct-select{
   display:flex;
@@ -254,7 +279,7 @@ struct-diagram.compactselect struct-select>*:not(:first-child){
   margin-top:1.5em;
 }
 struct-diagram.compactselect struct-select>*:first-child{
-  border-left:1px solid black;
+  border-left:1px solid var(--structoview-line);
 }
 struct-diagram.compactselect struct-select>struct-block:after{
   right: unset;
@@ -275,9 +300,9 @@ struct-call:after,struct-call:before{
 }
 struct-call:after{
   right:0em;
-  border-left:1px solid black;
+  border-left:1px solid var(--structoview-line);
 }
 struct-call:before{
   left:0em;
-  border-right:1px solid black;
+  border-right:1px solid var(--structoview-line);
 }

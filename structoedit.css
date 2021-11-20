@@ -1,3 +1,30 @@
+:root{
+  --structoedit-warning:red;
+  --structoedit-menu:gray;
+  --structoedit-menu-bg:lightgray;
+  --structoedit-menu-sel:green;
+  --structoedit-menu-sel-bg:lightblue;
+  --structoedit-mark:PaleTurquoise;
+  
+  --githublink-text:#000;
+  --githublink-bg:#EEE;
+  --githublink-shadow:lightgray;
+  --githublink-borderline:#AAA;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+  --structoedit-menu:silver;
+  --structoedit-menu-bg:DimGray;
+  --structoedit-menu-sel:mediumseagreen;
+  --structoedit-menu-sel-bg:DarkSlateGray;
+  --structoedit-mark:midnightblue;
+
+  --githublink-text:#EEE;
+  --githublink-bg:#666;
+  --githublink-shadow:#999;
+  --githublink-borderline:#000;
+  }
+}
 .structcode{
   width:35em;
   min-height:30em;
@@ -5,10 +32,11 @@
   max-width: 90vw;
   background:none;
   margin: 0;
+  color: inherit;
 }
 .structcodemarks .mark{
   display:inline-block;
-  background-color: PaleTurquoise;
+  background-color: var(--structoedit-mark);
 }
 .scroller {
   position: relative;
@@ -29,7 +57,7 @@
 	color: transparent;
 }
 .structcodecmd{
-  color:blue;
+  color:red;
   font-weight:bold;
 }
 figure{
@@ -41,12 +69,12 @@ figure{
   /*! padding-bottom: 0; */
   border:1px dotted gray;
 }
-figcaption{
+figcaption {
   border: 1px dotted gray;
   width: calc(100% + 2px);
   display: block;
   /* margin-top: .5em; */
-  background-color: lightgray;
+  background-color: var(--structoview-bg-block);
   padding: .25em;
   font-family: sans-serif;
   position: absolute;
@@ -64,7 +92,7 @@ struct-diagram{
   /*--decision-else:'nein';*/
 }
 figure[data-parsererror]:after{
-  color:red;
+  color:var(--structoedit-warning);
   content:attr(data-parsererror);
   display:block;
   position: absolute;
@@ -81,19 +109,19 @@ figure[data-parsererror]:after{
 }
 nav{display:inline-block;margin-top:1em;}
 nav a{text-decoration:none;}
-nav ul{position:relative;display:inline-flex;margin: 0;padding-left: 0;padding-right: .5em;border-top: 1px solid black;}
-nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:white;padding:0 .1em }
+nav ul{position:relative;display:inline-flex;margin: 0;padding-left: 0;padding-right: .5em;border-top: 1px solid var(--structoview-line);}
+nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em }
 nav li{list-style:none;margin: .25em;}
-nav .menuitem{color:green;background-color:lightblue;}
+nav .menuitem{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
 nav .menuitem{cursor:pointer;display:block;padding:.5em;margin:.25em;box-sizing:border-box;white-space:pre;line-height: 1em;}
-nav label.menuitem{color:gray;background-color:lightgray;}
+nav label.menuitem{color:var(--structoedit-menu);background-color:var(--structoedit-menu-bg);}
 input#showHTML:checked~main #diagram{position:relative;visibility:visible;}
 input#showSVG:checked~main #imageview{display:inline-block;}
 input#showXML:checked~main #structure{display:inline-block;}
 input#showHTML:checked~nav label[for="showHTML"],
 input#showSVG:checked~nav label[for="showSVG"],
 input#showXML:checked~nav label[for="showXML"]
-{color:green;background-color:lightblue;}
+{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
 input#showHTML:focus~nav label[for="showHTML"],
 input#showSVG:focus~nav label[for="showSVG"],
 input#showXML:focus~nav label[for="showXML"]
@@ -105,34 +133,23 @@ body>input{
 body>input:focus{outline-style:none;}
 body{
   font-family: Segoe UI,sans-serif;
+  color:var(--structoview-text);
+  background-color:var(--structoview-bg);
 }
 header {
   display: inline-block;
   margin: .5em;
-  border: 1px solid black;
+  border: 1px solid var(--structoview-line);
   padding-left: 1em;
   padding-top: 1em;
 }
 header h1{
-  border-left: 1px solid black;
+  border-left: 1px solid var(--structoview-line);
   padding: 0.1em .25em;
   margin: 0;
-  border-top: 1px solid black;
+  border-top: 1px solid var(--structoview-line);
 }
-figcaption {
-  border: 1px dotted gray;
-  width: calc(100% + 2px);
-  display: block;
-  /* margin-top: .5em; */
-  background-color: lightgray;
-  padding: .25em;
-  font-family: sans-serif;
-  position: absolute;
-  left: -1px;
-  top: -1.5em;
-  box-sizing: border-box;
-  line-height: 1em;
-}
+
 @media (max-width: 40em){
   body{
     margin:0px;
@@ -143,7 +160,7 @@ figcaption {
   footer{
     margin:0px;
     padding:2vw;
-    border-top:1px solid black;
+    border-top:1px solid var(--structoview-line);
   }
 }
 @media (min-width:40em){
@@ -164,15 +181,15 @@ figcaption {
   #githublink {
     position: absolute;
     top: calc(-2em - 6px);
-    background-color: #EEE;
+    background-color: var(--githublink-bg);
     transform: rotate(45deg);
     transform-origin: left bottom;
     width: 211px;
-    box-shadow: 0 0 5px lightgray;
+    box-shadow: 0 0 5px var(--githublink-shadow);
   }
   #githublink a {
-    border: 1px solid #AAA;
-    color: #000;
+    border: 1px solid var(--githublink-borderline);
+    color: var(--githublink-text);
     display: block;
     margin: 1px 0;
     padding: .5em 0;
