@@ -35,6 +35,7 @@ function generateStructureView(diagram, xmlviewid){
   xdoc.appendChild(copy);
   var xmllines = new XMLSerializer().serializeToString(xdoc)
           .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
+          .replace(/ data-\w+=([\"])[^\"]+[\"]/g, "")
           .replace(/<([^\/][-a-z]*)><\/\1>/g, '<$1>	</$1>')
           .replace(/>(?=<)/g, '>\n')
           .replace(/>	</g, '><')
@@ -87,20 +88,32 @@ function hightlightText(sourcecode){
     let content = sourcecode.value;
     marker.textContent='';
     const Commands = /^(\s*)([A-Z]+:)(.*)$/;
+    let linenum=0;
     for(let line of content.split('\n')){
       let parts = line.match(Commands);
+      let textparent = marker;
+      if(sourcecode.dataset.line){
+        if(Number(sourcecode.dataset.line)===linenum){
+          let selection = document.createElement('SPAN');
+          selection.className="selected";
+          textparent.append(selection);
+          textparent = selection;
+        }
+      }
       //console.log(line,parts);
       if(parts){
-        marker.append(parts[1]);
+        textparent.append(parts[1]);
         let mark = document.createElement('SPAN');
         mark.className='mark';
         mark.textContent = parts[2];
-        marker.append(mark);
-        marker.append(parts[3]+'\n');
+        textparent.append(mark);
+        textparent.append(parts[3]);
       }else{
         //console.log(line);
-        marker.append(line+'\n');
+        textparent.append(line);
       }
+      marker.append('\n');
+      ++linenum;
     }
     //marker.textContent = content;
   }
@@ -130,7 +143,28 @@ function generateViews(){
     }
   }
   var allViews = document.querySelectorAll('.structview');
+  function updateLineNum(structview, num){
+    if(structview){
+      var codeid = structview.dataset.structcodeId;
+      var sourcecode = document.querySelector('#'+codeid);
+      sourcecode.dataset.line = num;
+      hightlightText(sourcecode);
+    }
+  };
   for(var i=0;i<allViews.length;i++){
+    allViews[i].addEventListener('mouseleave',(evt)=>{
+      let structview = evt.target.closest('.structview');
+      updateLineNum(structview, null);
+    });
+    allViews[i].addEventListener('mouseover',(evt)=>{
+      let structview = evt.target.closest('.structview');
+      let nextline = evt.target.closest('*[data-line]');
+      if(nextline){
+        updateLineNum(structview, nextline.dataset.line);
+      }else{
+        updateLineNum(structview, null);
+      }
+    });
     updateView(allViews[i]);
   }
 
@@ -180,7 +214,9 @@ function parseStructCode(structCode){
         let comment = trimmed.substr(1).trim();
         if (comment.length > 0) {
           if (!(stack[0].lastElementChild instanceof StructComment)) {
-            stack[0].appendChild(new StructComment());
+            let item = new StructComment();
+            item.dataset.line=""+i;
+            stack[0].appendChild(item);
           }
           stack[0].lastElementChild.addComment(comment);
         }
@@ -188,12 +224,15 @@ function parseStructCode(structCode){
         stack[0].caption = trimmed.substr(8).trim();
       }else if(trimmed.startsWith('IF:')){
         var item = new StructDecision();
+        item.dataset.line=""+i;
         item.condition = trimmed.substr(3).trim();
         stack.unshift(item);
         stack.unshift(item.thenBlock);
       }else if(trimmed.startsWith('ELSE:')){
         var block = stack.shift();
-        stack.unshift(stack[0].elseBlock);
+        let item = stack[0].elseBlock;
+        item.dataset.line=""+i;
+        stack.unshift(item);
       }else if(trimmed.startsWith('ENDIF:')){
         checkBlock('IF');
         var block = stack.shift();
@@ -202,6 +241,7 @@ function parseStructCode(structCode){
         stack[0].appendChild(item);
       }else if(trimmed.startsWith('SELECT:')){
         var item = new StructChoose();
+        item.dataset.line=""+i;
         item.condition = trimmed.substr(7).trim();
         stack.unshift(item);
       }else if(trimmed.startsWith('CASE:')){
@@ -211,6 +251,7 @@ function parseStructCode(structCode){
           checkEmptyBlock(prevcase);
         }
         var block = stack[0].createNextCase();
+        block.dataset.line=""+i;
         block.condition = trimmed.substr(5).trim();
         stack.unshift(block);
       }else if(trimmed.startsWith('DEFAULT:')){
@@ -219,7 +260,9 @@ function parseStructCode(structCode){
           var prevcase = stack.shift();
           checkEmptyBlock(prevcase);
         }
-        stack.unshift(stack[0].defaultBlock);
+        let defitem = stack[0].defaultBlock;
+        defitem.dataset.line=""+i;
+        stack.unshift(defitem);
       }else if(trimmed.startsWith('ENDSELECT:')){
         checkBlock('SELECT');
         var item = stack[0];
@@ -232,6 +275,7 @@ function parseStructCode(structCode){
         stack[0].appendChild(item);
       }else if(trimmed.startsWith('FOR:')){
         var item = new StructIteration();
+        item.dataset.line=""+i;
         item.condition = trimmed.substr(4).trim();
         stack.unshift(item);
         stack.unshift(item.loopBlock);
@@ -243,6 +287,7 @@ function parseStructCode(structCode){
         stack[0].appendChild(item);
       }else if(trimmed.startsWith('REPEAT:')){
         var item = new StructRepeat();
+        item.dataset.line=""+i;
         item.condition = trimmed.substr(7).trim();
         stack.unshift(item);
         stack.unshift(item.loopBlock);
@@ -260,6 +305,7 @@ function parseStructCode(structCode){
         }else{
           item = new StructLoop();
         }
+        item.dataset.line=""+i;
         stack.unshift(item);
         stack.unshift(item.loopBlock);
       }else if(trimmed.startsWith('ENDLOOP:')){
@@ -272,16 +318,22 @@ function parseStructCode(structCode){
         checkEmptyBlock(item.loopBlock);
         stack[0].appendChild(item);
       } else if(trimmed.startsWith('CALL:')) {
-        stack[0].appendChild(new StructCall()).textContent = trimmed.substr(5).trim();
+        let item = new StructCall();
+        item.dataset.line=""+i;
+        stack[0].appendChild(item).textContent = trimmed.substr(5).trim();
       } else if(trimmed.startsWith('BREAK:')) {
-        stack[0].appendChild(new StructBreak()).textContent = trimmed.substr(6).trim();
+        let item = new StructBreak();
+        item.dataset.line=""+i;
+        stack[0].appendChild(item).textContent = trimmed.substr(6).trim();
       } else if (trimmed.startsWith('RETURN:')
               || trimmed.startsWith('EXIT:')) {
         let item = new StructBreak();
+        item.dataset.line=""+i;
         item.exit = true;
         stack[0].appendChild(item).textContent = trimmed.substr(7).trim();
       } else if(trimmed.startsWith('CONCURRENT:')) {
         var item = new StructConcurrent();
+        item.dataset.line=""+i;
         //item.condition = trimmed.substr(7).trim();
         stack.unshift(item);
       } else if(trimmed.startsWith('THREAD:')) {
@@ -303,7 +355,9 @@ function parseStructCode(structCode){
         //checkEmptyBlock(item.defaultBlock);
         stack[0].appendChild(item);
       } else {
-        stack[0].appendChild(new StructSequence()).textContent = trimmed;
+        let item = new StructSequence();
+        item.dataset.line=""+i;
+        stack[0].appendChild(item).textContent = trimmed;
       }
     }catch(e){
       throw new StructCodeParseException(i, lines[i], e);

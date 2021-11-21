@@ -20,6 +20,7 @@ limitations under the License.
   --structoedit-menu-sel:green;
   --structoedit-menu-sel-bg:lightblue;
   --structoedit-mark:PaleTurquoise;
+  --structoedit-hovermark:lavender;
   
   --githublink-text:#000;
   --githublink-bg:#EEE;
@@ -33,6 +34,7 @@ limitations under the License.
   --structoedit-menu-sel:mediumseagreen;
   --structoedit-menu-sel-bg:DarkSlateGray;
   --structoedit-mark:midnightblue;
+  --structoedit-hovermark:DarkSlateGray;
 
   --githublink-text:#EEE;
   --githublink-bg:#666;
@@ -52,6 +54,16 @@ limitations under the License.
 .structcodemarks .mark{
   display:inline-block;
   background-color: var(--structoedit-mark);
+}
+.structcodemarks .selected{
+  position:relative;
+}
+.structcodemarks .selected:before{
+  background-color:var(--structoedit-hovermark);
+  content:' ';
+  width:35em;
+  display: inline-block;
+  position: absolute;
 }
 .scroller {
   position: relative;
@@ -163,6 +175,18 @@ header h1{
   padding: 0.1em .25em;
   margin: 0;
   border-top: 1px solid var(--structoview-line);
+}
+struct-diagram struct-sequence:hover,
+struct-diagram struct-comment:hover,
+struct-diagram struct-call:hover,
+struct-diagram struct-break:hover,
+struct-diagram struct-select:hover,
+struct-diagram struct-decision:hover,
+struct-diagram struct-loop:hover,
+struct-diagram struct-iteration:hover,
+struct-diagram struct-concurrent:hover
+{
+  background:var(--structoedit-hovermark) ;
 }
 
 @media (max-width: 40em){
