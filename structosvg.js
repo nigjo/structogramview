@@ -396,7 +396,8 @@ class SVGGenerator {
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructChoose) {
       group.setAttribute("class", "switch");
-      var compactselect = false;//'compactselect'
+      var compactselect = structElement.closest('struct-diagram')
+          .classList.contains('compactselect');
       if(!compactselect) {
         let ebRect = structElement.lastChild.getBoundingClientRect();
         this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);

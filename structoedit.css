@@ -114,10 +114,6 @@ figcaption {
   white-space:pre-wrap;
   font-family:Consolas;
 }
-struct-diagram{
-  /*--decision-then:'ja';*/
-  /*--decision-else:'nein';*/
-}
 figure[data-parsererror]:after{
   color:var(--structoedit-warning);
   content:attr(data-parsererror);
@@ -134,11 +130,14 @@ figure[data-parsererror]:after{
   left:0;
   visibility:hidden;
 }
-nav{display:inline-block;margin-top:1em;}
+nav{display:inline-block;margin-top:1em;top:-.4em}
 nav a{text-decoration:none;}
-nav ul{position:relative;display:inline-flex;margin: 0;padding-left: 0;padding-right: .5em;border-top: 1px solid var(--structoview-line);}
-nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em }
-nav li{list-style:none;margin: .25em;}
+nav ul{position:relative;display:inline-flex;margin:0;padding:0;}
+nav ul[title]{padding-right:.5em;border-top:1px solid var(--structoview-line);flex-direction:column;}
+nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em;}
+nav li{list-style:none;margin:.25em;margin-bottom:0;}
+nav ul[title]>li{margin:0;padding:0}
+nav li.break{flex-basis:100%;margin:0;}
 nav .menuitem{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
 nav .menuitem{cursor:pointer;display:block;padding:.5em;margin:.25em;box-sizing:border-box;white-space:pre;line-height: 1em;}
 nav label.menuitem{color:var(--structoedit-menu);background-color:var(--structoedit-menu-bg);}

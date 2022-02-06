@@ -58,31 +58,37 @@ window.addEventListener('DOMContentLoaded', loadSample);
 </header>
 <nav>
   <ul title="View Options">
-    <li><label class="menuitem" for="showHTML">HTML</label></li>
-    <li><label class="menuitem" for="showSVG">SVG</label></li>
-    <li><label class="menuitem" for="showXML">XML</label></li>
-    <li><select class="menuitem" name="locale" onchange="generateViews()">
-    <option>default
-    <option value="en">english
-    <option value="de">deutsch
-    </select></li>
+    <li><ul class="buttons">
+      <li><label class="menuitem" for="showHTML">HTML</label></li>
+      <li><label class="menuitem" for="showSVG">SVG</label></li>
+      <li><label class="menuitem" for="showXML">XML</label></li>
+      <li><select class="menuitem" name="locale" onchange="generateViews()">
+      <option>default
+      <option value="en">english
+      <option value="de">deutsch
+      </select></li>
+    </ul></li><li><ul class="options">
+      <li><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
+    </ul></li>
   </ul>
   <ul title="Actions">
+  <li><ul class="buttons">
     <li>
-  <script>
-    const downloadSvgWithOptionsContext = document.currentScript.parentNode;
-    function downloadSvgWithOptions(event) {
-      let withSources = downloadSvgWithOptionsContext
-              .querySelector("input[name='withSources']").checked;
-      let withStructure = downloadSvgWithOptionsContext
-              .querySelector("input[name='withStructure']").checked;
-      downloadSvg(event, 'diagramView', withSources, withStructure);
-    }
-  </script>
-  <a class="menuitem" href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
-  <span><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></span>
-  <span><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></span>
-    </li>
+      <script>
+        const downloadSvgWithOptionsContext = document.currentScript.parentNode;
+        function downloadSvgWithOptions(event) {
+          let withSources = downloadSvgWithOptionsContext
+                  .querySelector("input[name='withSources']").checked;
+          let withStructure = downloadSvgWithOptionsContext
+                  .querySelector("input[name='withStructure']").checked;
+          downloadSvg(event, 'diagramView', withSources, withStructure);
+        }
+      </script>
+      <a class="menuitem" href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
+    </ul></li><li><ul class="options">
+      <li><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></li>
+      <li><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></li>
+    </ul></li>
   </ul>
 </nav>
 <main>
@@ -109,7 +115,6 @@ export as SVG
 <figcaption>Sourcecode</figcaption>
 </figure>
 <figure id="diagram">
-<label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label>
 <div class="structview" id="diagramView"
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
 <figcaption>Nassi–Shneiderman diagram</figcaption>
