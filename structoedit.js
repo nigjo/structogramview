@@ -64,6 +64,13 @@ function updateView(structview){
   try{
     erroritem.dataset.parsererror = '';
     var diagram = generateDiagram(structview);
+    var locale = document.querySelector("select[name='locale']");
+    if(locale){
+      if(locale.value==='default')
+        diagram.removeAttribute('lang');
+      else
+        diagram.lang=locale.value;
+    }
     generateStructureView(diagram, structview.dataset.structcodeXml);
     let svggen = new SVGGenerator();
     svggen.generateDownloadImage(diagram, structview);
