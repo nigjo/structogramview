@@ -63,14 +63,24 @@ function updateView(structview){
   }
   try{
     erroritem.dataset.parsererror = '';
+
     var diagram = generateDiagram(structview);
-    generateStructureView(diagram, structview.dataset.structcodeXml);
-    let svggen = new SVGGenerator();
-    svggen.generateDownloadImage(diagram, structview);
     var uscompact = document.getElementById('usecompactselect');
     if(uscompact && uscompact.checked){
       diagram.classList.add('compactselect');
     }
+    var locale = document.querySelector("select[name='locale']");
+    if(locale){
+      if(locale.value==='default')
+        diagram.removeAttribute('lang');
+      else
+        diagram.lang=locale.value;
+    }
+
+    generateStructureView(diagram, structview.dataset.structcodeXml);
+
+    let svggen = new SVGGenerator();
+    svggen.generateDownloadImage(diagram, structview);
   }catch(e){
     console.warn('parser:', e);
     if(e instanceof StructCodeParseException){

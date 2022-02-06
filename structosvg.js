@@ -396,13 +396,18 @@ class SVGGenerator {
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructChoose) {
       group.setAttribute("class", "switch");
-      let ebRect = structElement.lastChild.getBoundingClientRect();
-      this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
-      this.addLine(group,
-              ebRect.left - cRect.left, ebRect.top - cRect.top,
-              cRect.width, 0);
-      let t = this.addText(group, structElement, "condition");
-      this.center(structElement, t);
+      var compactselect = false;//'compactselect'
+      if(!compactselect) {
+        let ebRect = structElement.lastChild.getBoundingClientRect();
+        this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
+        this.addLine(group,
+                ebRect.left - cRect.left, ebRect.top - cRect.top,
+                cRect.width, 0);
+      }
+      let t = this.addText(group, structElement, "condition");      
+      if(!compactselect) {
+        this.center(structElement, t);
+      }
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructIteration) {
       group.setAttribute("class", "for");

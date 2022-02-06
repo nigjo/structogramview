@@ -27,6 +27,18 @@ limitations under the License.
   --structoview-bg:white;
   --structoview-bg-block:lightgray;
 }
+:lang(de){
+  --structoview-then:'ja';
+  --structoview-else:'nein';
+  --structoview-default:'sonst';
+  --structoview-exit:'beende';
+}
+:lang(en){
+  --structoview-then:'yes';
+  --structoview-else:'no';
+  --structoview-default:'default';
+  --structoview-exit:'exit';
+}
 @media(prefers-color-scheme:dark){
   :root{
     --structoview-text:Gainsboro;
