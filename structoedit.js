@@ -63,7 +63,12 @@ function updateView(structview){
   }
   try{
     erroritem.dataset.parsererror = '';
+
     var diagram = generateDiagram(structview);
+    var uscompact = document.getElementById('usecompactselect');
+    if(uscompact && uscompact.checked){
+      diagram.classList.add('compactselect');
+    }
     var locale = document.querySelector("select[name='locale']");
     if(locale){
       if(locale.value==='default')
@@ -71,13 +76,11 @@ function updateView(structview){
       else
         diagram.lang=locale.value;
     }
+
     generateStructureView(diagram, structview.dataset.structcodeXml);
+
     let svggen = new SVGGenerator();
     svggen.generateDownloadImage(diagram, structview);
-    var uscompact = document.getElementById('usecompactselect');
-    if(uscompact && uscompact.checked){
-      diagram.classList.add('compactselect');
-    }
   }catch(e){
     console.warn('parser:', e);
     if(e instanceof StructCodeParseException){
