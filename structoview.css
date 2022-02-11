@@ -20,24 +20,15 @@ limitations under the License.
   --structoview-exit:'exit';
   
   --structoview-text:black;
-  --structoview-border:lightblue;
   --structoview-line:black;
   --structoview-hint:gray;
   --structoview-comment:var(--structoview-hint);
+}
+@media screen {
+:root{
+  --structoview-border:lightblue;
   --structoview-bg:white;
   --structoview-bg-block:lightgray;
-}
-:lang(de){
-  --structoview-then:'ja';
-  --structoview-else:'nein';
-  --structoview-default:'sonst';
-  --structoview-exit:'beende';
-}
-:lang(en){
-  --structoview-then:'yes';
-  --structoview-else:'no';
-  --structoview-default:'default';
-  --structoview-exit:'exit';
 }
 @media(prefers-color-scheme:dark){
   :root{
@@ -50,6 +41,37 @@ limitations under the License.
     --structoview-bg-block:#303030;
   }
   
+}  
+.structoview-light, .structoview-light *{
+  --structoview-text:black;
+  --structoview-border:lightblue;
+  --structoview-line:black;
+  --structoview-hint:gray;
+  --structoview-comment:var(--structoview-hint);
+  --structoview-bg:white;
+  --structoview-bg-block:lightgray;
+}
+.structoview-dark, .structoview-dark *{
+  --structoview-text:Gainsboro;
+  --structoview-border:navy;
+  --structoview-line:gray;
+  --structoview-hint:gray;
+  --structoview-comment:var(--structoview-hint);
+  --structoview-bg:black;
+  --structoview-bg-block:#303030;
+}
+}
+:lang(de){
+  --structoview-then:'ja';
+  --structoview-else:'nein';
+  --structoview-default:'sonst';
+  --structoview-exit:'beende';
+}
+:lang(en){
+  --structoview-then:'yes';
+  --structoview-else:'no';
+  --structoview-default:'default';
+  --structoview-exit:'exit';
 }
 struct-diagram:before{
   position:relative;

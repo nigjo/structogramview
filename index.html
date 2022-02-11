@@ -46,6 +46,20 @@ function loadSourceTo(filename, sourceid){
   client.send();
 }
 window.addEventListener('DOMContentLoaded', loadSample);
+function updateTheme(event){
+  let us = event.target.value;
+  let them = us=='light'?'dark':'light';
+  document.body.classList.remove("structoview-"+them);
+  document.body.classList.remove("structoedit-"+them);
+  if(document.body.classList.contains("structoview-"+us)){
+    document.body.classList.remove("structoview-"+us);
+    document.body.classList.remove("structoedit-"+us);  
+    event.target.checked = false;
+  }else{  
+    document.body.classList.add("structoview-"+us);
+    document.body.classList.add("structoedit-"+us);  
+  }
+}
 </script>
 <!--<style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>-->
 </head>
@@ -69,6 +83,12 @@ window.addEventListener('DOMContentLoaded', loadSample);
       </select></li>
     </ul></li><li><ul class="options">
       <li><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
+      <li>Theme:
+      <input type="radio" name="theme" onclick="updateTheme(event)" id="themeL" value="light">
+      <label title="Light Theme" for="themeL">⬜</label>
+      <input type="radio" name="theme" onclick="updateTheme(event)" id="themeD" value="dark">
+      <label title="Dark Theme" for="themeD">⬛</label>
+      </li>
     </ul></li>
   </ul>
   <ul title="Actions">
