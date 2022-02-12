@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+@media screen {
 :root{
   --structoedit-warning:red;
   --structoedit-menu:gray;
@@ -42,6 +43,35 @@ limitations under the License.
   --githublink-borderline:#000;
   }
 }
+.structoedit-light, .structoedit-light *{
+  --structoedit-warning:red;
+  --structoedit-menu:gray;
+  --structoedit-menu-bg:lightgray;
+  --structoedit-menu-sel:green;
+  --structoedit-menu-sel-bg:lightblue;
+  --structoedit-mark:PaleTurquoise;
+  --structoedit-hovermark:lavender;
+  
+  --githublink-text:#000;
+  --githublink-bg:#EEE;
+  --githublink-shadow:lightgray;
+  --githublink-borderline:#AAA;
+}
+.structoedit-dark, .structoedit-dark *{
+  --structoedit-menu:silver;
+  --structoedit-menu-bg:DimGray;
+  --structoedit-menu-sel:mediumseagreen;
+  --structoedit-menu-sel-bg:DarkSlateGray;
+  --structoedit-mark:midnightblue;
+  --structoedit-hovermark:DarkSlateGray;
+
+  --githublink-text:#EEE;
+  --githublink-bg:#666;
+  --githublink-shadow:#999;
+  --githublink-borderline:#000;
+}
+}
+
 .structcode{
   width:35em;
   min-height:30em;
@@ -152,6 +182,9 @@ input#showHTML:focus~nav label[for="showHTML"],
 input#showSVG:focus~nav label[for="showSVG"],
 input#showXML:focus~nav label[for="showXML"]
 {box-sizing:border-box;outline:1px dotted gray;}
+input[name=theme]{display:none;}
+input[name=theme]+label{position:relative;}
+input[name=theme]:checked+label:after{content:'✓';position: absolute;left:0;text-align:center;width:100%}
 body>input{
   position:absolute;
   appearance: none;
@@ -237,4 +270,12 @@ struct-diagram struct-concurrent:hover
     font-size: .8em;
     font-weight: bold;
   }
+}
+@media print{
+  nav{display:none;}
+  .structcode{display:none;}
+  .structcodemarks{color:initial;position: initial;}
+  figure{display:block;}
+  footer{position:relative;}
+  #githublink{display:none;}
 }
