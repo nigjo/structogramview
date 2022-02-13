@@ -160,10 +160,10 @@ figure[data-parsererror]:after{
   left:0;
   visibility:hidden;
 }
-nav{display:inline-block;margin-top:1em;top:-.4em}
+nav{display:inline-block;padding-top: 0;vertical-align:top;}
 nav a{text-decoration:none;}
 nav ul{position:relative;display:inline-flex;margin:0;padding:0;}
-nav ul[title]{padding-right:.5em;border-top:1px solid var(--structoview-line);flex-direction:column;}
+nav ul[title]{padding-right:.5em;border-top:1px solid var(--structoview-line);flex-direction:column;vertical-align: top;margin-top: 1em;top: .55em;margin-bottom: 1em;}
 nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em;}
 nav li{list-style:none;margin:.25em;margin-bottom:0;}
 nav ul[title]>li{margin:0;padding:0}
@@ -201,6 +201,7 @@ header {
   border: 1px solid var(--structoview-line);
   padding-left: 1em;
   padding-top: 1em;
+  vertical-align: baseline;
 }
 header h1{
   border-left: 1px solid var(--structoview-line);
