@@ -95,7 +95,7 @@ function updateTheme(event){
   <li><ul class="buttons">
     <li>
       <script>
-        const downloadSvgWithOptionsContext = document.currentScript.parentNode;
+        const downloadSvgWithOptionsContext = document.currentScript.closest("ul[title]");
         function downloadSvgWithOptions(event) {
           let withSources = downloadSvgWithOptionsContext
                   .querySelector("input[name='withSources']").checked;
