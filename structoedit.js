@@ -79,8 +79,13 @@ function updateView(structview){
 
     generateStructureView(diagram, structview.dataset.structcodeXml);
 
-    let svggen = new SVGGenerator();
-    svggen.generateDownloadImage(diagram, structview);
+    document.dispatchEvent(new CustomEvent('structoedit.update',{
+      detail:{
+        source:sourcecode,
+        view:structview,
+        diagram:diagram
+      }
+    }));
   }catch(e){
     console.warn('parser:', e);
     if(e instanceof StructCodeParseException){

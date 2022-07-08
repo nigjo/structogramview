@@ -18,6 +18,11 @@ limitations under the License.
  StructChoose, StructBlock, StructCall, StructBreak, StructCaseBlock,
  StructLoop, StructIteration, StructComment */
 
+document.addEventListener('structoedit.update', evt=>{
+  let svggen = new SVGGenerator();
+  svggen.generateDownloadImage(evt.detail.diagram, evt.detail.view);
+});
+
 class SVGManger {
   /**
    * @param {Element} viewer the element must have an attribute
