@@ -18,6 +18,24 @@ limitations under the License.
  StructChoose, StructBlock, StructCall, StructBreak, StructCaseBlock,
  StructLoop, StructIteration, StructComment */
 
+const viewTemplate = `
+<svg id="svgdiagram" xmlns="http://www.w3.org/2000/svg">
+<style>
+svg{stroke:none;stroke-width:1px;fill:white;}
+line{stroke:black;}
+text{font-family:sans-serif;fill:black;}
+.comment>text{font-style:italic;fill:gray;}
+.whiteShadow{fill:none !important;stroke:white;stroke-width:2px;}
+.casevalue,.blocktitle{fill:gray;font-size:75%;font-style:italic;}
+.caption{font-weight:bold;font-size:1.25em;}
+</style>
+</svg>
+`;
+
+document.addEventListener('DOMContentLoaded', () => {
+  addView('SVG', 1000, 'SVG View', viewTemplate);
+});
+
 document.addEventListener('structoedit.update', evt=>{
   let svggen = new SVGGenerator();
   svggen.generateDownloadImage(evt.detail.diagram, evt.detail.view);

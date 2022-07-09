@@ -13,7 +13,66 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* global StructBlock */
+/* global StructBlock, StructComment, StructCodeParseException */
+
+/**
+ * Add a new View
+ * 
+ * @param {String} name
+ * @param {Number} position
+ * @param {String} figureCaption
+ * @param {String} figureContent
+ * @returns {undefined}
+ */
+function addView(name, position = 8000, figureCaption = "", figureContent = "") {
+  //<input type="radio" name="viewOption" tabindex="2" id="showSVG">
+  var radio = document.createElement('input');
+  radio.type = 'radio';
+  radio.name = 'viewOption';
+  radio.tabIndex = 2;
+  radio.id = 'show' + name;
+  document.body.insertAdjacentElement('afterbegin', radio);
+
+  //<li><label class="menuitem" for="showSVG">SVG</label></li>
+  var item = document.createElement('li');
+  item.className = 'viewOption';
+  item.dataset.position = position;
+  var label = document.createElement('label');
+  label.className = 'menuitem';
+  label.htmlFor = 'show' + name;
+  label.textContent = name;
+  item.append(label);
+  let buttons = document
+          .querySelectorAll("nav ul[title='View Options'] .buttons li[data-position]");
+  let added = false;
+  for (var i=0;i<buttons.length;i++) {
+    if(position < buttons[i].dataset.position){
+      //console.log('addView', buttons[i]);
+      buttons[i].parentNode.insertBefore(item, buttons[i]);
+      added = true;
+      break;
+    }
+  }
+  if(!added){
+    document.querySelector("nav ul[title='View Options'] .buttons")
+          .append(item);
+  }
+  
+  //<figure id="imageview">
+  let figure = document.createElement('figure');
+  figure.id = 'view' + name;
+  figure.className = 'view';
+  //`figureContent`
+  if (figureContent && figureContent !== '') {
+    figure.insertAdjacentHTML('afterbegin', figureContent);
+  }
+  //<figcaption>`figureCaption`</figcaption>
+  let caption = document.createElement('figcaption');
+  caption.append(figureCaption);
+  figure.append(caption);
+  document.querySelector('main').append(figure);
+  //</figure>
+}
 
 function generateDiagram(viewer){
   var codeid = viewer.dataset.structcodeId;
@@ -27,32 +86,6 @@ function generateDiagram(viewer){
     viewer.removeChild(viewer.firstChild);
   viewer.appendChild(diagram);
   return viewer.firstElementChild;
-}
-function generateStructureView(diagram, xmlviewid){
-  let xdoc = document.implementation.createDocument(
-          "https://nigjo.github.io/structogramview/", "", null);
-  let copy = diagram.cloneNode(true);
-  xdoc.appendChild(copy);
-  var xmllines = new XMLSerializer().serializeToString(xdoc)
-          .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
-          .replace(/ data-\w+=([\"])[^\"]+[\"]/g, "")
-          .replace(/<([^\/][-a-z]*)><\/\1>/g, '<$1>	</$1>')
-          .replace(/>(?=<)/g, '>\n')
-          .replace(/>	</g, '><')
-          .split('\n');
-  var indended = '';
-  var indent = '';
-  for(var l in xmllines){
-    if(xmllines[l].indexOf('</')>=0){
-      if(xmllines[l].indexOf('<struct-')<0)
-        indent = indent.substr(2);
-      indended+=indent+xmllines[l]+'\n';
-    }else{
-      indended+=indent+xmllines[l]+'\n';
-      indent+='  ';
-    }
-  }
-  document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g,'<$1');
 }
 function updateView(structview){
   var codeid = structview.dataset.structcodeId;
@@ -77,7 +110,7 @@ function updateView(structview){
         diagram.lang=locale.value;
     }
 
-    generateStructureView(diagram, structview.dataset.structcodeXml);
+    //generateStructureView(diagram, structview.dataset.structcodeXml);
 
     document.dispatchEvent(new CustomEvent('structoedit.update',{
       detail:{
@@ -194,7 +227,7 @@ function updateContent(ta, keyevent){
 }
 function checkCurrentContent(ta, e){
   clearTimeout(window.nextUpdate);
-  window.nextUpdate = setTimeout(function(){updateContent(ta, e)}, 500);
+  window.nextUpdate = setTimeout(function(){updateContent(ta, e);}, 500);
   hightlightText(e.target);
 }
 
@@ -389,3 +422,43 @@ function parseStructCode(structCode){
 
   return stack.shift();
 }
+
+class XMLView {
+  constructor() {
+    document.addEventListener('DOMContentLoaded', () =>
+      addView('XML', 8500, 'Structured view',
+              '<div class="structtree" id="xmlview"></div>'));
+    document.addEventListener('structoedit.update', evt => {
+      var diagram = evt.detail.diagram;
+      var structview = evt.detail.view;
+      this.generateStructureView(diagram, structview.dataset.structcodeXml);      
+    });
+  }
+  generateStructureView(diagram, xmlviewid) {
+    let xdoc = document.implementation.createDocument(
+            "https://nigjo.github.io/structogramview/", "", null);
+    let copy = diagram.cloneNode(true);
+    xdoc.appendChild(copy);
+    var xmllines = new XMLSerializer().serializeToString(xdoc)
+            .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
+            .replace(/ data-\w+=([\"])[^\"]+[\"]/g, "")
+            .replace(/<([^\/][-a-z]*)><\/\1>/g, '<$1>	</$1>')
+            .replace(/>(?=<)/g, '>\n')
+            .replace(/>	</g, '><')
+            .split('\n');
+    var indended = '';
+    var indent = '';
+    for (var l in xmllines) {
+      if (xmllines[l].indexOf('</') >= 0) {
+        if (xmllines[l].indexOf('<struct-') < 0)
+          indent = indent.substr(2);
+        indended += indent + xmllines[l] + '\n';
+      } else {
+        indended += indent + xmllines[l] + '\n';
+        indent += '  ';
+      }
+    }
+    document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g, '<$1');
+  }
+}
+new XMLView();

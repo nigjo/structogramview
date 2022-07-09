@@ -110,7 +110,7 @@ limitations under the License.
 .structcodemarks {
 	position: absolute;
 	z-index: -1;
-	margin: 2 0 0 2;
+	margin: 2px 0px 0px 2px;
 	color: transparent;
 }
 .structcodecmd{
@@ -151,7 +151,7 @@ figure[data-parsererror]:after{
   position: absolute;
   top:100%;
 }
-#imageview,#structure{
+.view{
   display:none;
 }
 #diagram{
@@ -171,9 +171,12 @@ nav li.break{flex-basis:100%;margin:0;}
 nav .menuitem{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
 nav .menuitem{cursor:pointer;display:block;padding:.5em;margin:.25em;box-sizing:border-box;white-space:pre;line-height: 1em;}
 nav label.menuitem{color:var(--structoedit-menu);background-color:var(--structoedit-menu-bg);}
+nav .buttons{}
+nav .options{}
+main .structview{}
 input#showHTML:checked~main #diagram{position:relative;visibility:visible;}
-input#showSVG:checked~main #imageview{display:inline-block;}
-input#showXML:checked~main #structure{display:inline-block;}
+input#showSVG:checked~main #viewSVG{display:inline-block;}
+input#showXML:checked~main #viewXML{display:inline-block;}
 input#showHTML:checked~nav label[for="showHTML"],
 input#showSVG:checked~nav label[for="showSVG"],
 input#showXML:checked~nav label[for="showXML"]

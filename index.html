@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
 <title>Struktogram Viewer</title>
 <meta name="viewport" content="width=50em" />
 <link rel="stylesheet" href="structoview.css">
@@ -48,7 +48,7 @@ function loadSourceTo(filename, sourceid){
 window.addEventListener('DOMContentLoaded', loadSample);
 function updateTheme(event){
   let us = event.target.value;
-  let them = us=='light'?'dark':'light';
+  let them = us==='light'?'dark':'light';
   document.body.classList.remove("structoview-"+them);
   document.body.classList.remove("structoedit-"+them);
   if(document.body.classList.contains("structoview-"+us)){
@@ -65,18 +65,14 @@ function updateTheme(event){
 </head>
 <body>
 <input type="radio" name="viewOption" tabindex="2" checked id="showHTML">
-<input type="radio" name="viewOption" tabindex="2" id="showSVG">
-<input type="radio" name="viewOption" tabindex="2" id="showXML">
 <header>
 <h1>Structogram Editor</h1>
 </header>
 <nav>
   <ul title="View Options">
     <li><ul class="buttons">
-      <li><label class="menuitem" for="showHTML">HTML</label></li>
-      <li><label class="menuitem" for="showSVG">SVG</label></li>
-      <li><label class="menuitem" for="showXML">XML</label></li>
-      <li><select class="menuitem" name="locale" onchange="generateViews()">
+      <li data-position="100"><label class="menuitem" for="showHTML">HTML</label></li>
+      <li data-position="9000"><select class="menuitem" name="locale" onchange="generateViews()">
       <option>default
       <option value="en">english
       <option value="de">deutsch
@@ -112,7 +108,6 @@ function updateTheme(event){
   </ul>
 </nav>
 <main>
-<div style="display:inline-block;margin:0">
 <figure id="source"><div class="scroller">
 <div id="sample1marks" class="structcodemarks"></div>
   <textarea tabindex="1" id="sample1" class="structcode" data-erroritem="source" data-marks="sample1marks" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
@@ -139,25 +134,6 @@ export as SVG
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
 <figcaption>Nassi–Shneiderman diagram</figcaption>
 </figure>
-<figure id="imageview"><!-- this may be set to display:none -->
-<svg id="svgdiagram" xmlns="http://www.w3.org/2000/svg">
-<style>
-svg{stroke:none;stroke-width:1px;fill:white;}
-line{stroke:black;}
-text{font-family:sans-serif;fill:black;}
-.comment>text{font-style:italic;fill:gray;}
-.whiteShadow{fill:none !important;stroke:white;stroke-width:2px;}
-.casevalue,.blocktitle{fill:gray;font-size:75%;font-style:italic;}
-.caption{font-weight:bold;font-size:1.25em;}
-</style>
-</svg>
-<figcaption>SVG View</figcaption>
-</figure>
-<figure id="structure">
-<div class="structtree" id="xmlview"></div>
-<figcaption>Structured view</figcaption>
-</figure>
-</div>
 </main>
 <footer>
 <div id="githublink">
