@@ -89,21 +89,8 @@ function updateTheme(event){
   </ul>
   <ul title="Actions">
   <li><ul class="buttons">
-    <li>
-      <script>
-        const downloadSvgWithOptionsContext = document.currentScript.parentNode;
-        function downloadSvgWithOptions(event) {
-          let withSources = downloadSvgWithOptionsContext
-                  .querySelector("input[name='withSources']").checked;
-          let withStructure = downloadSvgWithOptionsContext
-                  .querySelector("input[name='withStructure']").checked;
-          downloadSvg(event, 'diagramView', withSources, withStructure);
-        }
-      </script>
-      <a class="menuitem" href="diagram.svg" onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
-    </ul></li><li><ul class="options">
-      <li><label title="store current sources within svg"><input type="checkbox" checked name="withSources"> Source</label></li>
-      <li><label title="store 'Source Structure' within svg"><input type="checkbox" name="withStructure"> Structure</label></li>
+    </ul></li>
+  <li><ul class="options">
     </ul></li>
   </ul>
 </nav>

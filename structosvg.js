@@ -32,8 +32,27 @@ text{font-family:sans-serif;fill:black;}
 </svg>
 `;
 
+function downloadSvgWithOptions(event) {
+  const downloadSvgWithOptionsContext = 
+          document.querySelector("nav ul[title='Actions']");
+  let withSources = downloadSvgWithOptionsContext
+          .querySelector("input[name='withSources']").checked;
+  let withStructure = downloadSvgWithOptionsContext
+          .querySelector("input[name='withStructure']").checked;
+  downloadSvg(event, 'diagramView', withSources, withStructure);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   addView('SVG', 1000, 'SVG View', viewTemplate);
+  addAction('&#x1F4E5; Store SVG', 'diagram.svg', 500, downloadSvgWithOptions);
+
+  let sourceOpt = addOption('withSources', 200,
+          'Source', 'store current sources within svg');
+  sourceOpt.type = 'checkbox';
+  sourceOpt.checked = true;
+  let structOpt = addOption('withStructure', 400,
+          'Structure', "store 'Source Structure' within svg");
+  structOpt.type = 'checkbox';
 });
 
 document.addEventListener('structoedit.update', evt=>{

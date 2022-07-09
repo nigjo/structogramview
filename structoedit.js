@@ -42,21 +42,10 @@ function addView(name, position = 8000, figureCaption = "", figureContent = "") 
   label.htmlFor = 'show' + name;
   label.textContent = name;
   item.append(label);
-  let buttons = document
-          .querySelectorAll("nav ul[title='View Options'] .buttons li[data-position]");
-  let added = false;
-  for (var i=0;i<buttons.length;i++) {
-    if(position < buttons[i].dataset.position){
-      //console.log('addView', buttons[i]);
-      buttons[i].parentNode.insertBefore(item, buttons[i]);
-      added = true;
-      break;
-    }
-  }
-  if(!added){
-    document.querySelector("nav ul[title='View Options'] .buttons")
-          .append(item);
-  }
+  
+  _addAtPosition(
+          document.querySelector("nav ul[title='View Options'] .buttons"),
+          item, position);
   
   //<figure id="imageview">
   let figure = document.createElement('figure');
@@ -72,6 +61,63 @@ function addView(name, position = 8000, figureCaption = "", figureContent = "") 
   figure.append(caption);
   document.querySelector('main').append(figure);
   //</figure>
+  
+  return figure;
+}
+
+function _addAtPosition(parent, item, position){
+  let buttons = parent.querySelectorAll("li[data-position]");
+  let added = false;
+  item.dataset.position = position;
+  for (var i=0;i<buttons.length;i++) {
+    if(position < buttons[i].dataset.position){
+      //console.log('addView', buttons[i]);
+      buttons[i].parentNode.insertBefore(item, buttons[i]);
+      added = true;
+      break;
+    }
+  }
+  if(!added){
+    parent.append(item);
+  }
+}
+
+function addAction(caption, href, position = 8000, actionCallback) {
+  let item = document.createElement('li');
+  //<a class="menuitem" href="diagram.svg"
+  // onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
+  let actionLink = document.createElement('a');
+  actionLink.className = 'menuitem';
+  actionLink.href = href;
+  actionLink.insertAdjacentHTML('afterbegin', caption);
+  actionLink.onclick = (evt) => {
+    actionCallback(evt);
+    return false;
+  };
+  item.append(actionLink);
+  _addAtPosition(document.querySelector('nav ul[title="Actions"] .buttons'),
+          item, position);
+  return actionLink;
+}
+
+function addOption(name, position = 8000, label, title){
+  //<li>
+  //<label title="store current sources within svg">
+  //<input type="checkbox" checked name="withSources"> Source</label>
+  //</li>
+  let item = document.createElement('li');
+  let labelElement = document.createElement('label');
+  labelElement.title = title;  
+  let option = document.createElement('input');
+  option.name = name;
+  labelElement.append(option);
+  labelElement.append(' ');
+  labelElement.insertAdjacentHTML('beforeend', label);
+  item.append(labelElement);
+
+  _addAtPosition(document.querySelector('nav ul[title="Actions"] .options'),
+          item, position);
+  return option;
 }
 
 function generateDiagram(viewer){
