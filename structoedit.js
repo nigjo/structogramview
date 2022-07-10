@@ -480,7 +480,7 @@ class XMLView {
       this.generateStructureView(diagram, structview.dataset.structcodeXml);      
     });
   }
-  generateStructureView(diagram, xmlviewid) {
+  generateStructure(diagram) {
     let xdoc = document.implementation.createDocument(
             "https://nigjo.github.io/structogramview/", "", null);
     let copy = diagram.cloneNode(true);
@@ -488,6 +488,7 @@ class XMLView {
     var xmllines = new XMLSerializer().serializeToString(xdoc)
             .replace(/ xmlns=([\"])[^\"]+[\"]/, "")
             .replace(/ data-\w+=([\"])[^\"]+[\"]/g, "")
+            .replace(/ (draggable)=([\"])[^\"]+[\"]/g, "")
             .replace(/<([^\/][-a-z]*)><\/\1>/g, '<$1>	</$1>')
             .replace(/>(?=<)/g, '>\n')
             .replace(/>	</g, '><')
@@ -504,7 +505,11 @@ class XMLView {
         indent += '  ';
       }
     }
-    document.getElementById(xmlviewid).textContent = indended.replace(/<(\/)?struct-/g, '<$1');
+    return indended.replace(/<(\/)?struct-/g, '<$1');
+  }
+  generateStructureView(diagram, xmlviewid) {
+    document.getElementById(xmlviewid).textContent =
+            this.generateStructure(diagram);
   }
 }
-new XMLView();
+window.xmlView = new XMLView();
