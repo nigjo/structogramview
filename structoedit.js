@@ -15,7 +15,7 @@ limitations under the License.
 */
 /* global StructBlock, StructComment, StructCodeParseException */
 
-class SourceImporter {
+class SourceParser {
   
   constructor(){
     if(this.constructor==='SourceImporter'){
@@ -24,7 +24,7 @@ class SourceImporter {
   }
   /**
    * 
-   * @param {SourceImporter} sourceImporter
+   * @param {SourceParser} sourceImporter
    * @returns {undefined}
    */
   static register(sourceImporter){
@@ -157,9 +157,9 @@ function generateDiagram(viewer){
   let codeid = viewer.dataset.structcodeId;
   let sourcecode = document.querySelector('#'+codeid);
   /**
-   * @type SourceImporter
+   * @type SourceParser
    */
-  var importer = new StructoCodeImporter();
+  var importer = new StructoCodeParser();
   if(sourcecode.value)
     importer.parseSourceContent(sourcecode.value);
   else
@@ -315,7 +315,7 @@ function checkCurrentContent(ta, e){
   hightlightText(e.target);
 }
 
-class StructoCodeImporter extends SourceImporter {
+class StructoCodeParser extends SourceParser {
 
   getFileType() {
     return 'spc';
@@ -534,7 +534,7 @@ class StructoCodeImporter extends SourceImporter {
   }
 }
 
-SourceImporter.register(new StructoCodeImporter());
+SourceParser.register(new StructoCodeParser());
 
 class XMLView {
   constructor() {
