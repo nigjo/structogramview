@@ -140,6 +140,11 @@ figcaption {
   box-sizing: border-box;
   line-height: 1em;
 }
+.chars{
+  display:inline-block;
+  position:absolute;
+  right:.5em;
+}
 #xmlview{
   white-space:pre-wrap;
   font-family:Consolas;
