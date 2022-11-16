@@ -97,7 +97,7 @@ limitations under the License.
 }
 .scroller {
   position: relative;
-	height: calc(100% - .7em - 4px);
+	max-height: calc(100% - .7em - 4px);
 	overflow: hidden;
 }
 .scroller>*{
