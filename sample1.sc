@@ -27,5 +27,5 @@ LOOP:
     add 1 to sum
   ENDIF:
   divide sum by 2
-ENDLOOP: sum &lt; 10
+ENDLOOP: sum > 10
 RETURN: calculated result
