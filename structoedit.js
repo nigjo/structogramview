@@ -269,7 +269,7 @@ function generateViews(){
           let mstyle=getComputedStyle(marker);
           marker.style.top =
               -evt.target.scrollTop
-              +parseInt(mstyle.insetInlineStart);
+              +parseInt(mstyle.insetInlineStart)+'px';
         });
       }
     }
