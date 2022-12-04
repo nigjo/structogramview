@@ -47,18 +47,37 @@ function loadSourceTo(filename, sourceid){
   client.send();
 }
 window.addEventListener('DOMContentLoaded', loadSample);
+document.addEventListener('readystatechange', (e)=>{
+  if(document.readyState==='interactive'){
+    let storedTheme = sessionStorage.getItem('structoedit.theme');
+    console.debug('theme', storedTheme);
+    if(storedTheme){
+      setTheme(storedTheme);
+    }
+  }
+});
 function updateTheme(event){
-  let us = event.target.value;
-  let them = us==='light'?'dark':'light';
+  console.debug('theme', event);
+  setTheme(event.target.value);
+}
+function setTheme(theme){
+  let them = theme==='light'?'dark':'light';
+  console.debug('theme', theme, them);
   document.body.classList.remove("structoview-"+them);
   document.body.classList.remove("structoedit-"+them);
-  if(document.body.classList.contains("structoview-"+us)){
-    document.body.classList.remove("structoview-"+us);
-    document.body.classList.remove("structoedit-"+us);  
-    event.target.checked = false;
+  if(document.body.classList.contains("structoview-"+theme)){
+    document.body.classList.remove("structoview-"+theme);
+    document.body.classList.remove("structoedit-"+theme);
+    document.getElementById('theme_light').checked = false;
+    document.getElementById('theme_dark').checked = false;
+    sessionStorage.removeItem('structoedit.theme');
+    console.debug('theme', 'removed');
   }else{  
-    document.body.classList.add("structoview-"+us);
-    document.body.classList.add("structoedit-"+us);  
+    document.body.classList.add("structoview-"+theme);
+    document.body.classList.add("structoedit-"+theme);
+    document.getElementById('theme_'+theme).checked = true;
+    sessionStorage.setItem('structoedit.theme', theme);
+    console.debug('theme', 'stored', theme);
   }
 }
 </script>
@@ -81,10 +100,10 @@ function updateTheme(event){
     </ul></li><li><ul class="options">
       <li><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
       <li>Theme:
-      <input type="radio" name="theme" onclick="updateTheme(event)" id="themeL" value="light">
-      <label title="Light Theme" for="themeL">⬜</label>
-      <input type="radio" name="theme" onclick="updateTheme(event)" id="themeD" value="dark">
-      <label title="Dark Theme" for="themeD">⬛</label>
+      <input type="radio" name="theme" onclick="updateTheme(event)" id="theme_light" value="light">
+      <label title="Light Theme" for="theme_light">⬜</label>
+      <input type="radio" name="theme" onclick="updateTheme(event)" id="theme_dark" value="dark">
+      <label title="Dark Theme" for="theme_dark">⬛</label>
       </li>
     </ul></li>
   </ul>
