@@ -252,8 +252,8 @@ class SVGGenerator {
     span.style.color = "red";
     span.style.display = "inline-block";
     span.style.position = "absolute";
-    span.style.left = x;
-    span.style.top = y;
+    span.style.left = x+'px';
+    span.style.top = y+'px';
     span.style.fontSize = referenceStyle.fontSize;
     span.style.fontWeight = referenceStyle.fontWeight;
     span.style.fontStyle = referenceStyle.fontStyle;
