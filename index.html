@@ -23,47 +23,58 @@ limitations under the License.
 <link rel="stylesheet" href="structoview.css">
 <script src="structoview.js"></script>
 <link rel="stylesheet" href="structoedit.css">
+<link rel="sample" id="samplesource" href="sample1.sc">
 <script src="structoedit.js"></script>
 <script src="structosvg.js"></script>
-<script>
-function loadSample(){
-  try{
-    loadSourceTo('sample1.sc', 'sample1');
-  }catch(e){
-    console.warn(e);
-    var view=document.querySelector(
-            ".structview[data-structcode-id='sample1']");
+<script id="sampleinit">
+(()=>{
+  let filename='sample1.sc';
+  let sourceid ='sample1';
+  Promise.all([
+    fetch(filename).then(r=>{
+      if(r.ok){
+        return r.text();
+      }
+      throw r;
+    }),
+    new Promise(ok=>{
+      document.addEventListener('readystatechange',()=>{
+        if(document.readyState==='interactive'){
+          ok();
+        }
+      });
+    })
+  ])
+  .then(args=>{
+    document.getElementById(sourceid).textContent = args[0];
+    var view=document.querySelector(".structview[data-structcode-id='"+sourceid+"']");
     updateView(view);
-  }
-}
-function loadSourceTo(filename, sourceid){
-  var client = new XMLHttpRequest();
-  client.overrideMimeType('text/plain');
-  client.addEventListener('load', function() {
-    document.getElementById(sourceid).innerHTML = client.responseText;
+  }).catch(e=>{
+    if(e instanceof Response){
+      document.getElementById(sourceid).textContent =
+              e.status+': '+e.statusText;
+    }else{
+      let fallback = document.getElementById('fallbacksample').content.querySelector("pre");
+      document.getElementById(sourceid).textContent = fallback.textContent;
+    }
     var view=document.querySelector(".structview[data-structcode-id='"+sourceid+"']");
     updateView(view);
   });
-  client.open('GET', filename);
-  client.send();
-}
-window.addEventListener('DOMContentLoaded', loadSample);
+})();
+</script><script id="theming">
 document.addEventListener('readystatechange', (e)=>{
   if(document.readyState==='interactive'){
     let storedTheme = sessionStorage.getItem('structoedit.theme');
-    console.debug('theme', storedTheme);
     if(storedTheme){
       setTheme(storedTheme);
     }
   }
 });
 function updateTheme(event){
-  console.debug('theme', event);
   setTheme(event.target.value);
 }
 function setTheme(theme){
   let them = theme==='light'?'dark':'light';
-  console.debug('theme', theme, them);
   document.body.classList.remove("structoview-"+them);
   document.body.classList.remove("structoedit-"+them);
   if(document.body.classList.contains("structoview-"+theme)){
@@ -72,13 +83,11 @@ function setTheme(theme){
     document.getElementById('theme_light').checked = false;
     document.getElementById('theme_dark').checked = false;
     sessionStorage.removeItem('structoedit.theme');
-    console.debug('theme', 'removed');
   }else{  
     document.body.classList.add("structoview-"+theme);
     document.body.classList.add("structoedit-"+theme);
     document.getElementById('theme_'+theme).checked = true;
     sessionStorage.setItem('structoedit.theme', theme);
-    console.debug('theme', 'stored', theme);
   }
 }
 </script>
@@ -119,6 +128,7 @@ function setTheme(theme){
 <figure id="source"><div class="scroller">
 <div id="sample1marks" class="structcodemarks"></div>
   <textarea tabindex="1" id="sample1" class="structcode" data-erroritem="source" data-marks="sample1marks" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
+  </textarea><template id="fallbacksample"><pre>
 IF: external sources exist?
 open source file
 select all
@@ -133,7 +143,7 @@ delete all
 write your code
 ENDIF:
 export as SVG
-</textarea>
+</pre></template>
 </div>
   <figcaption>Sourcecode<span class="chars"> &#x2254; &#x1F850; &#x2260; &#x2264; &#x2265;</span></figcaption>
 </figure>
