@@ -27,12 +27,15 @@ const LOGGER = "StructoEdit";
  * @param {Object} arguments[0] Aktuelle Konfiguration
  * @returns {Element} figure
  */
-StructoEdit.addView = function ({name, position = 8000, caption = "", viewContent = ""}) {
-  
+StructoEdit.addView = function ( {name, position = 8000, caption = "", viewContent = ""}) {
+
   console.assert(name !== undefined, "name must be set in config");
+  let firstView = false;
 
   let styles = document.getElementById("viewStyles");
   if (!styles) {
+    firstView = true;
+
     styles = document.createElement("style");
     styles.id = "viewStyles";
     document.head.append(styles);
@@ -53,6 +56,7 @@ StructoEdit.addView = function ({name, position = 8000, caption = "", viewConten
   radio.name = 'viewOption';
   radio.tabIndex = 2;
   radio.id = 'show' + name;
+  radio.checked = firstView;
   document.body.insertAdjacentElement('afterbegin', radio);
 
   //<li><label class="menuitem" for="showSVG">SVG</label></li>
@@ -127,7 +131,7 @@ StructoEdit.addOption = function ( {name,
         position = 8000,
         label, title,
         generator
-      }) {
+}) {
   //<li>
   //<label title="store current sources within svg">
   //<input type="checkbox" checked name="withSources"> Source</label>
@@ -340,7 +344,7 @@ StructoEdit.addOption({name:"locale", position:9000, generator:()=>{
     selector.insertAdjacentHTML("beforeend", '<option value="en">english');
     selector.insertAdjacentHTML("beforeend", '<option value="de">deutsch');
     return selector;
-}});
+  }});
 
 //<li data-position="200"><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
 let selectOption = StructoEdit.addOption({position: 200, category: "viewOptions", label: "Vertical 'Select'",
