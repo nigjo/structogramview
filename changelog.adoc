@@ -1,0 +1,91 @@
+= Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on https://keepachangelog.com/en/1.0.0/[Keep a Changelog],
+and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
+
+
+== [Unreleased]
+
+=== Breaking Changes
+
+ * modularized everything. Refactored classes to separate files.
+   Some functions are no longer available.
+   `structoview.*` can still be used standalone.
+ * Own parsers must extend `SourceParser` from `source-parser.js`
+   and must be registered. Only one allowed.
+
+
+=== Added
+
+ * Listening to new event `structoedit.refresh`. Can be used to initiate abstract
+   recreation of the views.
+ 
+
+=== Changed
+
+ * `StructoEdit.add*`-methods to use destructuring
+ * No more explicit `<script>` in `index.html`
+
+
+== [1.2.0] - 2023-12-10
+
+
+=== Added
+
+ * new custom event "structoedit.update"
+ * new abstract class SourceImporter
+ * Current selected Theme is stored in sessionStorage
+ * Some chars for Copy&Paste
+ * new xslt script to create a html view from a xml file
+
+
+=== Changed
+
+ * refactored nav-buttons and figures to be added by addView()
+ * Reworked Sample loading to work with Promise.
+ * Fallback is used only in case of failure.
+ * sample filename and view-id no longer hard coded in <script> block
+
+
+=== Fixed
+
+ * Alignment and Border in all browsers the same. Fixes the alignment problems in Chrome (#7)
+ * No overflow of Command-Marks in Chrome
+ * currect DOCTYPE for index.html
+ * updated screenshots
+ * Scrolling with correct style value
+
+
+== [v1.1.0] - 2022-02-22
+
+=== Added
+
+ * "EXIT" to commands
+ * (Mouse-)Hovered item is marked in HTML- and Source-View
+ * Added View Options to switch between "light" and "dark" Theme
+ * locale selection box
+
+
+=== Changed
+
+ * download filename will be determined from caption
+ * allow SVG to show 'vertical switch'
+ * Localization strings in CSS are using "--structoview-*"-prefix
+
+
+=== Fixed
+
+ * no newline for empty Elements in XML View
+
+
+== [v1.0.0] - 2021-10-24
+
+ * First downloadable package
+ * All elements defined in DIN 66261 (though the visuals are not 100% compliant)
+ * Works online and offline
+ * Ability to use as viewer only
+ * AST of the strctogram can be defined via HTML Custom Elements
+ * Export to SVG (with embedded source and/or AST)
+
