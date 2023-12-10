@@ -332,11 +332,11 @@ function _checkCurrentContent(ta, e) {
   _hightlightText(e.target);
 }
 
-StructoEdit.addView({name:"HTML", position:100, caption:"Nassi–Shneiderman diagram",
-viewContent:'<div class="structview" id="diagramView"\
+StructoEdit.addView({name: "HTML", position: 100, caption: "Nassi–Shneiderman diagram",
+  viewContent: '<div class="structview" id="diagramView"\
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>'});
 
-StructoEdit.addOption({name:"locale", position:9000, generator:()=>{
+StructoEdit.addOption({name: "locale", position: 9000, generator: () => {
     let selector = document.createElement("select");
     selector.className = "menuitem";
     selector.onchange = StructoEdit.generateViews;
@@ -346,11 +346,13 @@ StructoEdit.addOption({name:"locale", position:9000, generator:()=>{
     return selector;
   }});
 
+(() => {
 //<li data-position="200"><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
-let selectOption = StructoEdit.addOption({position: 200, category: "viewOptions", label: "Vertical 'Select'",
-  title: "'CASE:' elements with vertical alignment"});
-selectOption.id = "usecompactselect";
-selectOption.type = "checkbox";
-selectOption.onchange = e => StructoEdit.generateViews();
+  let selectOption = StructoEdit.addOption({position: 200, category: "viewOptions", label: "Vertical 'Select'",
+    title: "'CASE:' elements with vertical alignment"});
+  selectOption.id = "usecompactselect";
+  selectOption.type = "checkbox";
+  selectOption.onchange = e => StructoEdit.generateViews();
+})();
 
 export {StructoEdit};
