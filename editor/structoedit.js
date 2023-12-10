@@ -347,7 +347,7 @@ StructoEdit.addView({name: "HTML", position: 100, caption: "Nassi–Shneiderman 
 
 StructoEdit.addAction({category: "viewOptions", position: 9000, generator: () => {
     let selector = document.createElement("select");
-    selector.name = "language";
+    selector.name = "locale";
     selector.className = "menuitem";
     selector.onchange = StructoEdit.generateViews;
     selector.insertAdjacentHTML("beforeend", '<option>default');
