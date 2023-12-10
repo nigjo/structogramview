@@ -69,7 +69,7 @@ function createStorageTree(e) {
   let outData = xmldata.firstElementChild.cloneNode(true);
   outData.removeAttribute("xmlns:structo");
 
-  let astCopy = config.doc.createElementNS(config.namespace, "structo:ast");
+  let astCopy = config.doc.createElementNS("https://nigjo.github.io/structogramview/", "structo:ast");
   astCopy.append(outData);
 
   config.metadata.append(astCopy, "\n");
