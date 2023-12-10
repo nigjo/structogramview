@@ -165,6 +165,15 @@ figure[data-parsererror]:after{
   min-width: 240px;
   min-height: 120px;
 }
+/**Do not display:none the HTML-View to enable the SVG creation.*/
+#viewHTML.view{
+  display:inline-block;
+}
+input#showHTML:not(:checked) ~ main #viewHTML{
+  position:absolute;
+  visibility:hidden;
+}
+
 nav{display:inline-block;padding-top: 0;vertical-align:top;}
 nav a{text-decoration:none;}
 nav ul{position:relative;display:inline-flex;margin:0;padding:0;}
