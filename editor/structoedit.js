@@ -108,30 +108,39 @@ function _addAtPosition(parent, item, position) {
   }
 }
 
-StructoEdit.addAction = function ( {caption, category = "actions", href, position = 8000, callback}) {
+StructoEdit.addAction = function ( {caption, href,
+        category = "actions", position = 8000,
+        callback, generator }) {
   let item = document.createElement('li');
-  //<a class="menuitem" href="diagram.svg"
-  // onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
-  let actionLink = document.createElement('a');
-  actionLink.className = 'menuitem';
-  actionLink.href = href;
-  actionLink.insertAdjacentHTML('afterbegin', caption);
-  actionLink.onclick = (evt) => {
-    callback(evt);
-    return false;
-  };
-  item.append(actionLink);
+
+  let action;
+
+  if (generator) {
+    action = generator();
+    item.append(action);
+  } else {
+    //<a class="menuitem" href="diagram.svg"
+    // onclick="downloadSvgWithOptions(event, 'diagramView');return false;">📥 Store SVG</a>
+    action = document.createElement('a');
+    action.className = 'menuitem';
+    action.href = href;
+    action.insertAdjacentHTML('afterbegin', caption);
+    action.onclick = (evt) => {
+      callback(evt);
+      return false;
+    };
+    item.append(action);
+  }
   _addAtPosition(document.querySelector('nav ul[id="' + category + '"] .buttons'),
           item, position);
-  return actionLink;
+  return action;
 };
 
 StructoEdit.addOption = function ( {name,
         category = "actions",
         position = 8000,
         label, title,
-        generator
-}) {
+        generator }) {
   //<li>
   //<label title="store current sources within svg">
   //<input type="checkbox" checked name="withSources"> Source</label>
@@ -336,8 +345,9 @@ StructoEdit.addView({name: "HTML", position: 100, caption: "Nassi–Shneiderman 
   viewContent: '<div class="structview" id="diagramView"\
      data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>'});
 
-StructoEdit.addOption({name: "locale", position: 9000, generator: () => {
+StructoEdit.addAction({category: "viewOptions", position: 9000, generator: () => {
     let selector = document.createElement("select");
+    selector.name = "language";
     selector.className = "menuitem";
     selector.onchange = StructoEdit.generateViews;
     selector.insertAdjacentHTML("beforeend", '<option>default');
