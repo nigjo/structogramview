@@ -35,17 +35,21 @@ text{font-family:sans-serif;fill:black;}
 
 function downloadSvgWithOptions(event) {
   const downloadSvgWithOptionsContext =
-          document.querySelector("nav ul[title='Actions']");
+          document.querySelector("nav ul[id='actions']");
 //  let withSources = downloadSvgWithOptionsContext
 //          .querySelector("input[name='withSources']").checked;
 //  let withStructure = downloadSvgWithOptionsContext
 //          .querySelector("input[name='withStructure']").checked;
-  let metadataProvider =
-          downloadSvgWithOptionsContext.querySelectorAll("input")
+  console.debug("SVG", downloadSvgWithOptionsContext.querySelectorAll("input"));
+  console.debug("SVG", [... downloadSvgWithOptionsContext.querySelectorAll("input")]
           .filter((i) => i.checked)
-          .filter((i) => "onstoredata" in i)
+          );
+  let metadataProvider =
+          [... downloadSvgWithOptionsContext.querySelectorAll("input")]
+          .filter((i) => i.checked)
+          .filter((i) => "onstoreview" in i)
           .map((i) => {
-            return {name: i.name, provider: i.onstoredata};
+            return {name: i.name, provider: i.onstoreview};
           });
   console.debug("SVG", metadataProvider);
   downloadSvg(event, 'diagramView', metadataProvider);
@@ -60,13 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     label: 'Source', title: 'store current sources within svg'});
   sourceOpt.type = 'checkbox';
   sourceOpt.checked = true;
-  sourceOpt.onstoreview = addEventListener();
+  sourceOpt.onstoreview = addSources;
 });
 
 document.addEventListener('structoedit.update', evt => {
   let svggen = new SVGGenerator();
   svggen.generateDownloadImage(evt.detail.diagram, evt.detail.view);
 });
+
 
 class SVGManger {
   /**
@@ -101,7 +106,7 @@ function downloadSvg(event, viewerId, metadataProvider = []) {
   dlLink.style.display = "none";
   let viewer = getViewer(viewerId);
   let svg = SVGManger.getSvgImage(viewer);
-  let data = getDownloadData(svg, metadataProvider);
+  let data = getDownloadData(svg, viewer, metadataProvider);
   dlLink.href = data;
   let caption = viewer.firstElementChild.caption || 'diagram';
   //from MDN: "If the name is not a valid file name in the underlying OS, 
@@ -136,10 +141,12 @@ function downloadSvg(event, viewerId, metadataProvider = []) {
   /**
    * 
    * @param {Element} svg
-   * @param {Boolean} metadataProvider
+   * @param {Element} viewer
+   * @param {Array} metadataProvider
+   * 
    * @returns {DOMString}
    */
-  function getDownloadData(svg, metadataProvider = []) {
+  function getDownloadData(svg, viewer, metadataProvider = []) {
     //create copy of svg element
     let resultDoc = document.implementation.createDocument(
             SVGGenerator.SVGNS, "svg");
@@ -153,10 +160,12 @@ function downloadSvg(event, viewerId, metadataProvider = []) {
 
     if (metadataProvider.length >= 0) {
       for (var provider of metadataProvider) {
-        let evt = new CustomElements("storeView", {detail: {
+        console.log("SVG", "store", provider);
+        let evt = new CustomEvent("storeView", {detail: {
             doc: resultDoc,
             namespace: SVGGenerator.SVGNS,
-            metadata: getMetadata(resultDoc)
+            metadata: getMetadata(resultDoc),
+            sourceId: viewer.dataset.structcodeId
           }});
         provider.provider(evt);
       }
@@ -178,6 +187,25 @@ function downloadSvg(event, viewerId, metadataProvider = []) {
     return metadata;
 }
 
+}
+
+function addSources(event) {
+  let config = event.detail;
+
+  var sourcecode = document.getElementById(config.sourceId);
+  var sourceText;
+  if (sourcecode.value)
+    sourceText = sourcecode.value;
+  else
+    sourceText = sourcecode.textContent;
+  let sourcecopy = config.doc.createElementNS("https://nigjo.github.io/structogramview/", "structo:source");
+  //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
+  if (sourceText.indexOf("]]>") >= 0) {
+    sourcecopy.append(config.doc.createTextNode(sourceText));
+  } else {
+    sourcecopy.append(config.doc.createCDATASection(sourceText));
+  }
+  config.metadata.append(sourcecopy, "\n");
 }
 
 class SVGGenerator {
