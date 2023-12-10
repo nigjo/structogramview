@@ -20,130 +20,44 @@ limitations under the License.
 <title>Struktogram Viewer</title>
 <meta name="viewport" content="width=50em" />
 <link rel="icon" href="logo16.png" sizes="16x16">
+
 <link rel="stylesheet" href="structoview.css">
 <script src="structoview.js"></script>
-<link rel="stylesheet" href="structoedit.css">
+
 <link rel="sample" id="samplesource" href="sample1.sc">
-<script src="structoedit.js"></script>
-<script src="structosvg.js"></script>
-<script id="sampleinit">
-(()=>{
-  let filename=document.getElementById('samplesource')?.href;
-  if(!filename){
-    //fallback directly to "fallbacksample"
-    document.addEventListener('DOMContentLoaded',()=>{
-      let sourceid = document.querySelector('[data-structcode-id]')?.dataset.structcodeId;
-      let fallback = document.getElementById('fallbacksample').content.querySelector("pre");
-      document.getElementById(sourceid).textContent = fallback.textContent;
-      var view=document.querySelector(".structview[data-structcode-id='"+sourceid+"']");
-      updateView(view);
-    });
-    return;
-  }
-  Promise.all([
-    fetch(filename).then(r=>{
-      if(r.ok){
-        return r.text();
-      }
-      throw r;
-    }),
-    new Promise(ok=>{
-      document.addEventListener('readystatechange',()=>{
-        if(document.readyState==='interactive'){
-          //select the first view
-          let sourceid = document.querySelector('.structview[data-structcode-id]')?.dataset.structcodeId;
-          ok(sourceid);
-        }
-      });
-    })
-  ])
-  .then(args=>{
-    document.getElementById(args[1]).textContent = args[0];
-    var view=document.querySelector(".structview[data-structcode-id='"+args[1]+"']");
-    updateView(view);
-  }).catch(e=>{
-    //select the first view
-    let sourceid = document.querySelector('.structview[data-structcode-id]')?.dataset.structcodeId;
-    if(sourceid){
-      if(e instanceof Response){
-        document.getElementById(sourceid).textContent =
-                e.status+': '+e.statusText;
-      }else{
-        let fallback = document.getElementById('fallbacksample').content.querySelector("pre");
-        document.getElementById(sourceid).textContent = fallback.textContent;
-      }
-      var view=document.querySelector(".structview[data-structcode-id='"+sourceid+"']");
-      updateView(view);
-    }
-  });
-})();
-</script><script id="theming">
-document.addEventListener('readystatechange', (e)=>{
-  if(document.readyState==='interactive'){
-    let storedTheme = sessionStorage.getItem('structoedit.theme');
-    if(storedTheme){
-      setTheme(storedTheme);
-    }
-  }
-});
-function updateTheme(event){
-  setTheme(event.target.value);
-}
-function setTheme(theme){
-  let them = theme==='light'?'dark':'light';
-  document.body.classList.remove("structoview-"+them);
-  document.body.classList.remove("structoedit-"+them);
-  if(document.body.classList.contains("structoview-"+theme)){
-    document.body.classList.remove("structoview-"+theme);
-    document.body.classList.remove("structoedit-"+theme);
-    document.getElementById('theme_light').checked = false;
-    document.getElementById('theme_dark').checked = false;
-    sessionStorage.removeItem('structoedit.theme');
-  }else{  
-    document.body.classList.add("structoview-"+theme);
-    document.body.classList.add("structoedit-"+theme);
-    document.getElementById('theme_'+theme).checked = true;
-    sessionStorage.setItem('structoedit.theme', theme);
-  }
-}
-</script>
-<!--<style>.badge{display:block;transform:translate(-25%,0)rotate(45deg)translate(50%,0%);}</style>-->
+
+<link rel="stylesheet" href="editor/structoedit.css">
+<script type="module" src="editor/theming.js"></script>
+<script type="module" src="editor/strucocode-parser.js"></script>
+<script type="module" src="view/structosvg.js"></script>
+<script type="module" src="view/xmlview.js"></script>
+
+<script id="sampleinit" type="module" src="editor/sampleloader.js"></script>
 </head>
 <body>
-<input type="radio" name="viewOption" tabindex="2" checked id="showHTML">
 <header>
 <h1>Structogram Editor</h1>
 </header>
 <nav>
-  <ul title="View Options">
+  <ul id="viewOptions" data-title="View Options">
     <li><ul class="buttons">
-      <li data-position="100"><label class="menuitem" for="showHTML">HTML</label></li>
-      <li data-position="9000"><select class="menuitem" name="locale" onchange="generateViews()">
-      <option>default
-      <option value="en">english
-      <option value="de">deutsch
-      </select></li>
-    </ul></li><li><ul class="options">
-      <li><label><input id="usecompactselect" type="checkbox" onchange="updateContent('sample1', event)"> Vertical 'Select'</label></li>
-      <li>Theme:
-      <input type="radio" name="theme" onclick="updateTheme(event)" id="theme_light" value="light">
-      <label title="Light Theme" for="theme_light">⬜</label>
-      <input type="radio" name="theme" onclick="updateTheme(event)" id="theme_dark" value="dark">
-      <label title="Dark Theme" for="theme_dark">⬛</label>
-      </li>
+    </ul></li>
+    <li><ul class="options">
     </ul></li>
   </ul>
-  <ul title="Actions">
-  <li><ul class="buttons">
+  <ul id="actions" data-title="Actions">
+    <li><ul class="buttons">
     </ul></li>
-  <li><ul class="options">
+    <li><ul class="options">
     </ul></li>
   </ul>
 </nav>
 <main>
+  <noscript><p>This Page does not work without JavaScript.</p></noscript>
 <figure id="source"><div class="scroller">
 <div id="sample1marks" class="structcodemarks"></div>
-  <textarea tabindex="1" id="sample1" class="structcode" data-erroritem="source" data-marks="sample1marks" data-caption="Sample 1" onkeyup="checkCurrentContent(this,event)">
+  <textarea tabindex="1" id="sample1" class="structcode" data-erroritem="source" data-marks="sample1marks"
+            data-caption="Sample 1">
   </textarea><template id="fallbacksample"><pre>
 IF: external sources exist?
 open source file
@@ -162,12 +76,6 @@ export as SVG
 </pre></template>
 </div>
   <figcaption>Sourcecode<span class="chars"> &#x2254; &#x1F850; &#x2260; &#x2264; &#x2265;</span></figcaption>
-</figure>
-<figure id="diagram">
-<div class="structview" id="diagramView"
-     data-structcode-id="sample1" data-structcode-xml="xmlview" data-structcode-svg="svgdiagram"></div>
-<noscript><p>This Page does not work without JavaScript.</p></noscript>
-<figcaption>Nassi–Shneiderman diagram</figcaption>
 </figure>
 </main>
 <footer>

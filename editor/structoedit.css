@@ -162,20 +162,25 @@ figure[data-parsererror]:after{
 }
 .view{
   display:none;
-}
-#diagram{
-  position:absolute;
-  top:0;
-  left:0;
-  visibility:hidden;
+  min-width: 240px;
+  min-height: 120px;
 }
 nav{display:inline-block;padding-top: 0;vertical-align:top;}
 nav a{text-decoration:none;}
 nav ul{position:relative;display:inline-flex;margin:0;padding:0;}
-nav ul[title]{padding-right:.5em;border-top:1px solid var(--structoview-line);flex-direction:column;vertical-align: top;margin-top: 1em;top: .55em;margin-bottom: 1em;}
-nav ul:before{content:attr(title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em;}
+nav ul[data-title]{
+  padding-right:.5em;
+  border-top:1px solid var(--structoview-line);
+  flex-direction:column;
+  vertical-align: top;
+  top: .55em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  min-width: 8em;
+}
+nav ul[data-title]:before{content:attr(data-title);position:absolute;top:-1em;left:.5em;background-color:var(--structoview-bg);padding:0 .1em;}
 nav li{list-style:none;margin:.25em;margin-bottom:0;}
-nav ul[title]>li{margin:0;padding:0}
+nav ul[data-title]>li{margin:0;padding:0}
 nav li.break{flex-basis:100%;margin:0;}
 nav .menuitem{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
 nav .menuitem{cursor:pointer;display:block;padding:.5em;margin:.25em;box-sizing:border-box;white-space:pre;line-height: 1em;}
@@ -183,17 +188,6 @@ nav label.menuitem{color:var(--structoedit-menu);background-color:var(--structoe
 nav .buttons{}
 nav .options{}
 main .structview{}
-input#showHTML:checked~main #diagram{position:relative;visibility:visible;}
-input#showSVG:checked~main #viewSVG{display:inline-block;}
-input#showXML:checked~main #viewXML{display:inline-block;}
-input#showHTML:checked~nav label[for="showHTML"],
-input#showSVG:checked~nav label[for="showSVG"],
-input#showXML:checked~nav label[for="showXML"]
-{color:var(--structoedit-menu-sel);background-color:var(--structoedit-menu-sel-bg);}
-input#showHTML:focus~nav label[for="showHTML"],
-input#showSVG:focus~nav label[for="showSVG"],
-input#showXML:focus~nav label[for="showXML"]
-{box-sizing:border-box;outline:1px dotted gray;}
 input[name=theme]{display:none;}
 input[name=theme]+label{position:relative;}
 input[name=theme]:checked+label:after{content:'✓';position: absolute;left:0;text-align:center;width:100%}

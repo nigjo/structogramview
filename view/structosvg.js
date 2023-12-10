@@ -1,23 +1,24 @@
 /*
-Copyright 2021-2022 Jens Hofschröer <structogramview@nigjo.de>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Copyright 2021-2022 Jens Hofschröer <structogramview@nigjo.de>
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 /* global URL, DOMParser, Attr, Text */
 /* global StructSequence, StructContainer, StructDiagram, StructDecision, 
  StructChoose, StructBlock, StructCall, StructBreak, StructCaseBlock,
  StructLoop, StructIteration, StructComment */
 
+import {StructoEdit} from '../editor/structoedit.js';
 const viewTemplate = `
 <svg id="svgdiagram" xmlns="http://www.w3.org/2000/svg">
 <style>
@@ -33,29 +34,36 @@ text{font-family:sans-serif;fill:black;}
 `;
 
 function downloadSvgWithOptions(event) {
-  const downloadSvgWithOptionsContext = 
+  const downloadSvgWithOptionsContext =
           document.querySelector("nav ul[title='Actions']");
-  let withSources = downloadSvgWithOptionsContext
-          .querySelector("input[name='withSources']").checked;
-  let withStructure = downloadSvgWithOptionsContext
-          .querySelector("input[name='withStructure']").checked;
-  downloadSvg(event, 'diagramView', withSources, withStructure);
+//  let withSources = downloadSvgWithOptionsContext
+//          .querySelector("input[name='withSources']").checked;
+//  let withStructure = downloadSvgWithOptionsContext
+//          .querySelector("input[name='withStructure']").checked;
+  let metadataProvider =
+          downloadSvgWithOptionsContext.querySelectorAll("input")
+          .filter((i) => i.checked)
+          .filter((i) => "onstoredata" in i)
+          .map((i) => {
+            return {name: i.name, provider: i.onstoredata};
+          });
+  console.debug("SVG", metadataProvider);
+  downloadSvg(event, 'diagramView', metadataProvider);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  addView('SVG', 1000, 'SVG View', viewTemplate);
-  addAction('&#x1F4E5; Store SVG', 'diagram.svg', 500, downloadSvgWithOptions);
+  StructoEdit.addView({name: 'SVG', position: 1000, caption: 'SVG View', viewContent: viewTemplate});
+  StructoEdit.addAction({caption: '&#x1F4E5; Store SVG',
+    href: 'diagram.svg', position: 500, callback: downloadSvgWithOptions});
 
-  let sourceOpt = addOption('withSources', 200,
-          'Source', 'store current sources within svg');
+  let sourceOpt = StructoEdit.addOption({name: 'withSources', position: 200,
+    label: 'Source', title: 'store current sources within svg'});
   sourceOpt.type = 'checkbox';
   sourceOpt.checked = true;
-  let structOpt = addOption('withStructure', 400,
-          'Structure', "store 'Source Structure' within svg");
-  structOpt.type = 'checkbox';
+  sourceOpt.onstoreview = addEventListener();
 });
 
-document.addEventListener('structoedit.update', evt=>{
+document.addEventListener('structoedit.update', evt => {
   let svggen = new SVGGenerator();
   svggen.generateDownloadImage(evt.detail.diagram, evt.detail.view);
 });
@@ -87,13 +95,13 @@ class SVGManger {
   }
 }
 
-function downloadSvg(event, viewerId, withSources = true, withSourceTree = false) {
+function downloadSvg(event, viewerId, metadataProvider = []) {
   event.preventDefault();
   let dlLink = document.createElement("a");
   dlLink.style.display = "none";
   let viewer = getViewer(viewerId);
   let svg = SVGManger.getSvgImage(viewer);
-  let data = getDownloadData(svg, viewer, withSources, withSourceTree);
+  let data = getDownloadData(svg, metadataProvider);
   dlLink.href = data;
   let caption = viewer.firstElementChild.caption || 'diagram';
   //from MDN: "If the name is not a valid file name in the underlying OS, 
@@ -128,12 +136,10 @@ function downloadSvg(event, viewerId, withSources = true, withSourceTree = false
   /**
    * 
    * @param {Element} svg
-   * @param {Element} viewer
-   * @param {Boolean} withSources
-   * @param {Boolean} withSourceTree
+   * @param {Boolean} metadataProvider
    * @returns {DOMString}
    */
-  function getDownloadData(svg, viewer, withSources, withSourceTree = false) {
+  function getDownloadData(svg, metadataProvider = []) {
     //create copy of svg element
     let resultDoc = document.implementation.createDocument(
             SVGGenerator.SVGNS, "svg");
@@ -145,11 +151,15 @@ function downloadSvg(event, viewerId, withSources = true, withSourceTree = false
       resultDoc.firstChild.append(child.cloneNode(true));
     }
 
-    if (withSources) {
-      addSources(resultDoc, viewer);
-    }
-    if (withSourceTree) {
-      addSourceTree(resultDoc, viewer);
+    if (metadataProvider.length >= 0) {
+      for (var provider of metadataProvider) {
+        let evt = new CustomElements("storeView", {detail: {
+            doc: resultDoc,
+            namespace: SVGGenerator.SVGNS,
+            metadata: getMetadata(resultDoc)
+          }});
+        provider.provider(evt);
+      }
     }
 
     var serializer = new XMLSerializer();
@@ -166,54 +176,7 @@ function downloadSvg(event, viewerId, withSources = true, withSourceTree = false
       resultDoc.firstChild.insertBefore(metadata, resultDoc.firstChild.firstChild);
     }
     return metadata;
-  }
-
-  /**
-   * @param {Element} resultDoc
-   * @param {Element} viewer
-   */
-  function addSources(resultDoc, viewer) {
-    if (viewer.dataset.structcodeId) {
-      var sourcecode = document.getElementById(viewer.dataset.structcodeId);
-      var sourceText;
-      if (sourcecode.value)
-        sourceText = sourcecode.value;
-      else
-        sourceText = sourcecode.textContent;
-      let sourcecopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:source");
-      //sourcecopy.setAttribute("xmlns:structo", SVGGenerator.SELFNS);
-      if (sourceText.indexOf("]]>") >= 0) {
-        sourcecopy.append(resultDoc.createTextNode(sourceText));
-      } else {
-        sourcecopy.append(resultDoc.createCDATASection(sourceText));
-      }
-      let metadata = getMetadata(resultDoc);
-      metadata.append(sourcecopy, "\n");
-    }
-  }
-
-  /**
-   * @param {Element} resultDoc
-   * @param {Element} viewer
-   */
-  function addSourceTree(resultDoc, viewer) {
-    if (viewer.dataset.structcodeXml) {
-      var sourcecode = document.getElementById(viewer.dataset.structcodeXml);
-      let astCopy = resultDoc.createElementNS(SVGGenerator.SELFNS, "structo:ast");
-      let outcontent = sourcecode.textContent
-              .replace(/>/, " xmlns:structo=\"https://nigjo.github.io/structogramview/\">")
-              .replace(/<(\/)?/g, "<$1structo:");
-      //console.log("textContent", outcontent);
-      const parser = new DOMParser();
-      let xmldata = parser.parseFromString(outcontent, 'application/xml');
-      //console.log("xmldata", xmldata);
-      let outData = xmldata.firstElementChild.cloneNode(true);
-      outData.removeAttribute("xmlns:structo");
-      astCopy.append(outData);
-      let metadata = getMetadata(resultDoc);
-      metadata.append(astCopy, "\n");
-    }
-  }
+}
 
 }
 
@@ -252,8 +215,8 @@ class SVGGenerator {
     span.style.color = "red";
     span.style.display = "inline-block";
     span.style.position = "absolute";
-    span.style.left = x+'px';
-    span.style.top = y+'px';
+    span.style.left = x + 'px';
+    span.style.top = y + 'px';
     span.style.fontSize = referenceStyle.fontSize;
     span.style.fontWeight = referenceStyle.fontWeight;
     span.style.fontStyle = referenceStyle.fontStyle;
@@ -353,12 +316,12 @@ class SVGGenerator {
     }
 
     let style = getComputedStyle(structElement);
-    let topdelta = style.borderTopWidth==='0px'?1:0;
-    let leftdelta = style.borderLeftWidth==='0px'?1:0;
+    let topdelta = style.borderTopWidth === '0px' ? 1 : 0;
+    let leftdelta = style.borderLeftWidth === '0px' ? 1 : 0;
     //console.log(SVGGenerator.SVGLOGGER, style);
     this.addBorder(group, style.borderRightWidth, cRect.width, 0, cRect.width, cRect.height);
     this.addBorder(group, style.borderLeftWidth, 0, 0, 0, cRect.height);
-    this.addBorder(group, style.borderTopWidth, -leftdelta, 0, cRect.width+leftdelta, 0);
+    this.addBorder(group, style.borderTopWidth, -leftdelta, 0, cRect.width + leftdelta, 0);
     this.addBorder(group, style.borderBottomWidth, 0, cRect.height, cRect.width, cRect.height);
 
     if (structElement instanceof StructComment) {
@@ -431,24 +394,24 @@ class SVGGenerator {
     } else if (structElement instanceof StructDecision) {
       group.setAttribute("class", "if");
       let tbRect = structElement.thenBlock.getBoundingClientRect();
-      this.addLine(group, 0, 0, tbRect.width+1, tbRect.top - cRect.top);
-      this.addLine(group, tbRect.width+1, tbRect.top - cRect.top, cRect.width, 0);
+      this.addLine(group, 0, 0, tbRect.width + 1, tbRect.top - cRect.top);
+      this.addLine(group, tbRect.width + 1, tbRect.top - cRect.top, cRect.width, 0);
       let t = this.addText(group, structElement, "condition");
       this.center(structElement, t);
       this.addWhiteShadow(t);
     } else if (structElement instanceof StructChoose) {
       group.setAttribute("class", "switch");
       var compactselect = structElement.closest('struct-diagram')
-          .classList.contains('compactselect');
-      if(!compactselect) {
+              .classList.contains('compactselect');
+      if (!compactselect) {
         let ebRect = structElement.lastChild.getBoundingClientRect();
         this.addLine(group, 0, 0, ebRect.left - cRect.left, ebRect.top - cRect.top);
         this.addLine(group,
                 ebRect.left - cRect.left, ebRect.top - cRect.top,
                 cRect.width, 0);
       }
-      let t = this.addText(group, structElement, "condition");      
-      if(!compactselect) {
+      let t = this.addText(group, structElement, "condition");
+      if (!compactselect) {
         this.center(structElement, t);
       }
       this.addWhiteShadow(t);
@@ -458,21 +421,21 @@ class SVGGenerator {
     } else if (structElement instanceof StructLoop) {
       group.setAttribute("class", "while");
       let t = this.addText(group, structElement, "condition");
-      if(t){
+      if (t) {
         t.setAttribute("y", this.scale(structElement.scrollHeight
                 - this.lineHeight + this.textHeight - 1));
       }
-    } else if (structElement instanceof StructConcurrent) {      
+    } else if (structElement instanceof StructConcurrent) {
       group.setAttribute("class", "concurrent");
       let threadRect = structElement.firstElementChild.getBoundingClientRect();
       console.log("CONCURRENT", threadRect);
       let diag = threadRect.top - cRect.top;
-      let right = cRect.right-cRect.left;
-      let bottom = cRect.bottom-cRect.top;
+      let right = cRect.right - cRect.left;
+      let bottom = cRect.bottom - cRect.top;
       this.addLine(group, 0, diag, diag, 0);
-      this.addLine(group, right, diag, right-diag, 0);
-      this.addLine(group, 0, bottom-diag, diag, bottom);
-      this.addLine(group, right, bottom-diag, right-diag, bottom);
+      this.addLine(group, right, diag, right - diag, 0);
+      this.addLine(group, 0, bottom - diag, diag, bottom);
+      this.addLine(group, right, bottom - diag, right - diag, bottom);
     } else if (structElement instanceof StructDiagram) {
       group.setAttribute("class", "diagram");
       if (structElement.hasAttribute("caption")) {

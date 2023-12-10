@@ -159,11 +159,3 @@ customElements.define('struct-call',StructCall);
 customElements.define('struct-break',StructBreak);
 customElements.define('struct-concurrent',StructConcurrent);
 
-function StructCodeParseException(linenum, line, error){
-  this.linenum=linenum;
-  this.line = line;
-  this.contextError = error?error.toString():'unknown';
-  this.toString = function() {
-    return "Error in line " + linenum + ": '"+line+"', " + this.contextError;
-  };
-}
