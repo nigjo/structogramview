@@ -1,7 +1,6 @@
 = Structogram Editor
 
-> [!IMPORTANT]
-> This repo has been moved to [codeberg.org](https://codeberg.org/nigjo/structogramview)
+IMPORTANT: This repo has been moved to https://codeberg.org/nigjo/structogramview[codeberg.org]
 
 A browser based structogram (Nassi-Shneiderman diagram) viewer (and creator)
 
